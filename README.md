@@ -6,17 +6,14 @@ y traslado de integrantes entre grupos
 
 # OBJETIVOS
 
-1. Registro e inicio de sesión:
-   - Los usuarios podrán registrarse en la plataforma utilizando su correo electrónico y contraseña, o mediante     autenticación de terceros como Google o Facebook.
-   - Los usuarios registrados podrán iniciar sesión en la plataforma para acceder a sus proyectos y tareas.
-2. Organización de proyectos:
-   - Los usuarios podrán crear proyectos dentro de la plataforma "Campus".
-   - Cada proyecto estará relacionado con un equipo o departamento de la empresa.
-   - Los usuarios podrán asignar roles y permisos a los miembros del equipo dentro de cada proyecto.
-3. Creación de tareas:
+1. Organización de proyectos:
+   - Los usuarios podrán crear proyectos dentro de la plataforma "CAMPUSBOARD".
+   - Cada proyecto estará relacionado con un grupo.
+   - Los lideres podrán asignar roles y permisos a los miembros del equipo dentro de cada proyecto.
+2. Creación de tareas:
    - Dentro de cada proyecto, los usuarios podrán crear tareas individuales o en grupo para organizar el trabajo.
-   - Las tareas podrán tener diferentes atributos, como título, descripción, asignación a un miembro del equipo, prioridad, fecha de vencimiento, etiquetas, etc.
-4. Gestión de tareas:
+   - Las tareas podrán tener diferentes atributos, como nombre, asignación a un miembro del equipo, fecha de vencimiento, fecha de inicio, etc.
+3. Gestión de tareas:
    - Los usuarios podrán ver todas las tareas asignadas a ellos en un panel personalizado.
    - Podrán actualizar el estado de las tareas (por ejemplo, "por hacer", "en progreso", "completada", etc.).
    - Será posible asignar comentarios y adjuntar archivos a las tareas para facilitar la comunicación y documentación.
