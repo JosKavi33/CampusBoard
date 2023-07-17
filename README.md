@@ -4,7 +4,11 @@ En este proyecto vamos a construir un Backend, para una aplicacion de asiganacio
 con tiempos de inicio, tiempos de terminacion, grupos de trabajos, reasiganacion de tareas
 y traslado de integrantes entre grupos
 
-# OBJETIVOS
+# OBJETIVOS ESPECIFICOS
+
+CampusBoard, es una aplicacion de uso institucional, donde los campers podran entrenar la metodologia Scrum, mediante la creacion de proyectos por tareas tiempos definidos
+
+# OBJETIVOS ESPECIFICOS
 
 1. Organización de proyectos:
    - Los usuarios podrán crear proyectos dentro de la plataforma "CAMPUSBOARD".
@@ -20,7 +24,7 @@ y traslado de integrantes entre grupos
 
 # DISEÑO BASE DE DATOS
 
-<img src="img/Screenshot%20from%202023-07-13%2020-43-47.png" alt="MySQL Logo" width="1280">
+<img src="img/Screenshot%20from%202023-07-17%2008-35-06.png" alt="MySQL Logo" width="1280">
 
 ## Tecnologias Implementadas
 
