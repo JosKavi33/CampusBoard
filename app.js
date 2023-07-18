@@ -3,6 +3,9 @@ import express from 'express';
 import storageEstado from './routes/estado.js';
 import storageDocumento from './routes/documento.js';
 import storageGenero from './routes/genero.js';
+import storageRol from './routes/rol.js';
+import storageTarea from './routes/tareas.js';
+import storageProyecto from './routes/proyecto.js';
 
 
 dotenv.config();
@@ -12,7 +15,9 @@ appExpress.use(express.json());
 appExpress.use("/estado", storageEstado);
 appExpress.use("/documento", storageDocumento);
 appExpress.use("/genero", storageGenero);
-
+appExpress.use("/rol", storageRol);
+appExpress.use("/tareas", storageTarea);
+appExpress.use("/proyecto", storageProyecto);
 
 const config =JSON.parse(process.env.MY_CONFIG);
 appExpress.listen(config, ()=>console.log(`http://${config.hostname}:${config.port}`));
