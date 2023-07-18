@@ -11,7 +11,7 @@ storageProyecto.use((req, res, next) => {
     next();
 })
 
-storageProyecto.get("/:id?", (req,res)=>{
+storageProyecto.get("/:id?", proxyProyecto,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM proyecto WHERE id_proyecto = ?`, req.params.id]
         : [`SELECT * FROM proyecto`];

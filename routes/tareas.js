@@ -11,7 +11,7 @@ storageTarea.use((req, res, next) => {
     next();
 })
 
-storageTarea.get("/:id?", (req,res)=>{
+storageTarea.get("/:id?", proxyTarea , (req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM tareas WHERE id_tarea = ?`, req.params.id]
         : [`SELECT * FROM tareas`];

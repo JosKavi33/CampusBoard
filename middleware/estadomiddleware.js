@@ -5,11 +5,11 @@ import {estadoDTO} from "../dtocontroller/estadodto.js";
 import { validate } from "class-validator";
 
 const proxyEstado = express();
-proxyEstado.use(async(req,res,next)=>{
+proxyEstado.use("/:id",async(req,res,next)=>{ 
     try {
-        let data = plainToClass(estadoDTO, req.body, { excludeExtraneousValues: true});
+        console.log(req.params);
+        let data = plainToClass(estadoDTO, req.body && req.params, { excludeExtraneousValues: true});
         await validate(data);
-        req.body = JSON.parse(JSON.stringify(data));
         next();
     } catch (err) {
         res.status(err.status).send(err);

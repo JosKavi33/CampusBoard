@@ -5,11 +5,10 @@ import {generoDTO} from "../dtocontroller/generodto.js";
 import { validate } from "class-validator";
 
 const proxyGenero = express();
-proxyGenero.use(async(req,res,next)=>{
+proxyGenero.use("/:id", async(req,res,next)=>{ 
     try {
-        let data = plainToClass(generoDTO, req.body, { excludeExtraneousValues: true});
+        let data = plainToClass(generoDTO, req.body && req.params, { excludeExtraneousValues: true});
         await validate(data);
-        req.body = JSON.parse(JSON.stringify(data));
         next();
     } catch (err) {
         res.status(err.status).send(err);

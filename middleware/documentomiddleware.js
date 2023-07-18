@@ -5,11 +5,10 @@ import {documentoDTO} from "../dtocontroller/documentodto.js";
 import { validate } from "class-validator";
 
 const proxyDocumento = express();
-proxyDocumento.use(async(req,res,next)=>{
+proxyDocumento.use("/:id", async(req,res,next)=>{
     try {
-        let data = plainToClass(documentoDTO, req.body, { excludeExtraneousValues: true});
-        await validate(data);
-        req.body = JSON.parse(JSON.stringify(data));
+        let data = plainToClass(documentoDTO, req.body && req.params, { excludeExtraneousValues: true});
+        await validate(data); 
         next();
     } catch (err) {
         res.status(err.status).send(err);

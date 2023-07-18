@@ -11,7 +11,7 @@ storageGrupo.use((req, res, next) => {
     next();
 })
 
-storageGrupo.get("/:id?", (req,res)=>{
+storageGrupo.get("/:id?", proxyGrupo ,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM grupo WHERE id_grupo = ?`, req.params.id]
         : [`SELECT * FROM grupo`];

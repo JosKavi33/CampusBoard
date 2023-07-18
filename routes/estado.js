@@ -4,6 +4,8 @@ import proxyEstado from '../middleware/estadomiddleware.js';
 const storageEstado = Router();
 let con = undefined;
 
+
+
 storageEstado.use((req, res, next) => {
 
     let myConfig = JSON.parse(process.env.MY_CONNECT);
@@ -11,7 +13,7 @@ storageEstado.use((req, res, next) => {
     next();
 })
 
-storageEstado.get("/:id?", (req,res)=>{
+storageEstado.get("/:id?", proxyEstado ,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM estado WHERE id_estado = ?`, req.params.id]
         : [`SELECT * FROM estado`];

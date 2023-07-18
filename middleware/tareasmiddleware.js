@@ -5,11 +5,10 @@ import {tareasDTO} from "../dtocontroller/tareasdto.js";
 import { validate } from "class-validator";
 
 const proxyTarea = express();
-proxyTarea.use(async(req,res,next)=>{
+proxyTarea.use("/:id" ,async(req,res,next)=>{
     try {
-        let data = plainToClass(tareasDTO, req.body, { excludeExtraneousValues: true});
+        let data = plainToClass(tareasDTO, req.body && req.params, { excludeExtraneousValues: true});
         await validate(data);
-        req.body = JSON.parse(JSON.stringify(data));
         next();
     } catch (err) {
         res.status(err.status).send(err);

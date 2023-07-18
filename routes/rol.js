@@ -11,7 +11,7 @@ storageRol.use((req, res, next) => {
     next();
 })
 
-storageRol.get("/:id?", (req,res)=>{
+storageRol.get("/:id?", proxyRol ,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM rol WHERE id_rol = ?`, req.params.id]
         : [`SELECT * FROM rol`];

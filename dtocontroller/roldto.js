@@ -8,11 +8,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber, MaxLength, IsDefined } from 'class-validator';
+import { IsNumber } from 'class-validator';
 export class rolDTO {
-    constructor(ID, rol) {
+    constructor(ID, rol, ID2) {
         this.id_rol = ID;
         this.nombre_rol = rol;
+        this.id = ID2;
     }
 }
 __decorate([
@@ -25,12 +26,22 @@ __decorate([
     __metadata("design:type", Number)
 ], rolDTO.prototype, "id_rol", void 0);
 __decorate([
-    Expose({ name: 'nombre_rol' }),
-    IsDefined({ message: () => { throw { status: 401, message: `El parametro nombre_rol es obligatorio` }; } }),
-    MaxLength(30, { message: () => { throw { status: 401, message: `El parametro nombre_rol no puede pasar os 30 caracteres` }; } }),
+    Expose({ name: 'nombre_rol' })
+    /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_rol es obligatorio` }}})
+    @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro nombre_rol no puede pasar os 30 caracteres`}}}) */
+    ,
     Transform(({ value }) => { if (/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value))
         return value;
     else
         throw { status: 400, message: `El dato tipo_categoria incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", String)
 ], rolDTO.prototype, "nombre_rol", void 0);
+__decorate([
+    Expose({ name: 'id' }),
+    IsNumber(),
+    Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
+        return Math.floor(value);
+    else
+        throw { status: 400, message: `El dato id incumple los parametros acordados` }; }, { toClassOnly: true }),
+    __metadata("design:type", Number)
+], rolDTO.prototype, "id", void 0);

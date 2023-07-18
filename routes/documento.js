@@ -11,7 +11,7 @@ storageDocumento.use((req, res, next) => {
     next();
 })
 
-storageDocumento.get("/:id?", (req,res)=>{
+storageDocumento.get("/:id?", proxyDocumento ,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM documento WHERE id_documento = ?`, req.params.id]
         : [`SELECT * FROM documento`];

@@ -11,7 +11,7 @@ storageUsuario.use((req, res, next) => {
     next();
 })
 
-storageUsuario.get("/:id?", (req,res)=>{
+storageUsuario.get("/:id?", proxyUsuario, (req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM usuario WHERE id_usuario = ?`, req.params.id]
         : [`SELECT * FROM usuario`];

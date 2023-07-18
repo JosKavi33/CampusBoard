@@ -5,9 +5,9 @@ import {usuarioDTO} from "../dtocontroller/usuariodto.js";
 import { validate } from "class-validator";
 
 const proxyUsuario = express();
-proxyUsuario.use(async(req,res,next)=>{
+proxyUsuario.use("/:id", async(req,res,next)=>{
     try {
-        let data = plainToClass(usuarioDTO, req.body, { excludeExtraneousValues: true});
+        let data = plainToClass(usuarioDTO, req.body && req.params, { excludeExtraneousValues: true});
         await validate(data);
         req.body = JSON.parse(JSON.stringify(data));
         next();

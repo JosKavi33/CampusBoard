@@ -10,10 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Expose, Transform } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 export class grupoDTO {
-    constructor(ID, desarrollador, proyecto) {
+    constructor(ID, desarrollador, proyecto, ID2) {
         this.id_grupo = ID;
         this.desarrollador_grupo = desarrollador;
         this.proyecto_grupo = proyecto;
+        this.id = ID2;
     }
 }
 __decorate([
@@ -43,3 +44,12 @@ __decorate([
         throw { status: 400, message: `El dato proyecto_grupo incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
 ], grupoDTO.prototype, "proyecto_grupo", void 0);
+__decorate([
+    Expose({ name: 'id' }),
+    IsNumber(),
+    Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
+        return Math.floor(value);
+    else
+        throw { status: 400, message: `El dato id incumple los parametros acordados` }; }, { toClassOnly: true }),
+    __metadata("design:type", Number)
+], grupoDTO.prototype, "id", void 0);

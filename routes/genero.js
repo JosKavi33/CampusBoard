@@ -11,7 +11,7 @@ storageGenero.use((req, res, next) => {
     next();
 })
 
-storageGenero.get("/:id?", (req,res)=>{
+storageGenero.get("/:id?", proxyGenero ,(req,res)=>{
     let sql = (req.params.id)
         ? [`SELECT * FROM genero WHERE id_genero = ?`, req.params.id]
         : [`SELECT * FROM genero`];
