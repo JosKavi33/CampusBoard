@@ -7,6 +7,7 @@ import storageRol from './routes/rol.js';
 import storageTarea from './routes/tareas.js';
 import storageProyecto from './routes/proyecto.js';
 import storageUsuario from './routes/usuario.js';
+import storageGrupo from './routes/grupo.js';
 
 
 dotenv.config();
@@ -20,6 +21,7 @@ appExpress.use("/rol", storageRol);
 appExpress.use("/tareas", storageTarea);
 appExpress.use("/proyecto", storageProyecto);
 appExpress.use("/usuario", storageUsuario);
+appExpress.use("/grupo", storageGrupo);
 
 
 const config =JSON.parse(process.env.MY_CONFIG);
