@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Expose, Transform } from 'class-transformer';
 import { IsNumber, MaxLength, IsDefined } from 'class-validator';
-export class estadoDTO {
+export class generoDTO {
     constructor(ID, genero) {
         this.id_genero = ID;
         this.tipo_genero = genero;
@@ -23,7 +23,7 @@ __decorate([
     else
         throw { status: 400, message: `El dato id_genero incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], estadoDTO.prototype, "id_genero", void 0);
+], generoDTO.prototype, "id_genero", void 0);
 __decorate([
     Expose({ name: 'tipo_genero' }),
     IsDefined({ message: () => { throw { status: 401, message: `El parametro tipo_genero es obligatorio` }; } }),
@@ -33,4 +33,4 @@ __decorate([
     else
         throw { status: 400, message: `El dato tipo_categoria incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", String)
-], estadoDTO.prototype, "tipo_genero", void 0);
+], generoDTO.prototype, "tipo_genero", void 0);

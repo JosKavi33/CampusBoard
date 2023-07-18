@@ -1,7 +1,7 @@
 import { Expose, Type, Transform } from 'class-transformer';
 import { IsNumber, IsString, MaxLength, IsDefined } from 'class-validator';
 
-export class estadoDTO {
+export class generoDTO {
 
     @Expose({ name: 'id_genero' })
     @IsNumber()
