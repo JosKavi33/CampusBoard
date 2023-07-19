@@ -1,8 +1,26 @@
 import mysql from 'mysql2';
 import {Router} from 'express';
+import { SignJWT } from 'jose';
 import proxyDocumento from '../middleware/documentomiddleware.js';
 const storageDocumento = Router();
 let con = undefined;
+
+storageDocumento.use(async (req, res, next) => {
+    try {
+        const encoder = new TextEncoder();
+        const jwtconstructor = new SignJWT(req.params);
+        const jwt = await jwtconstructor
+            .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+            .setIssuedAt()
+            .setExpirationTime("1h")
+            .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
+        /* res.send({jwt}); */
+        next();
+    } catch (err) {
+        console.error('Error al generar el JWT:', err.message);
+        res.sendStatus(500);
+    }
+});
 
 storageDocumento.use((req, res, next) => {
 

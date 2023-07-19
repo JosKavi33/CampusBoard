@@ -101,6 +101,6 @@ export class usuarioDTO {
         this.edad_usuario = edad;
         this.tipodoc_usuario = documento;
         this.genero_usuario = genero;
-        this.id = ID2;
+        this.id = ID2; 
     }
-}
+} 

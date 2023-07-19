@@ -1,10 +1,26 @@
 import mysql from 'mysql2';
-import {Router} from 'express';
+import { Router } from 'express';
+import { SignJWT} from 'jose';
 import proxyEstado from '../middleware/estadomiddleware.js';
 const storageEstado = Router();
 let con = undefined;
 
-
+storageEstado.use(async (req, res, next) => {
+    try {
+        const encoder = new TextEncoder();
+        const jwtconstructor = new SignJWT(req.params);
+        const jwt = await jwtconstructor
+            .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+            .setIssuedAt()
+            .setExpirationTime("1h")
+            .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
+        /* res.send({jwt}); */
+        next();
+    } catch (err) {
+        console.error('Error al generar el JWT:', err.message);
+        res.sendStatus(500);
+    }
+});
 
 storageEstado.use((req, res, next) => {
 
@@ -13,18 +29,16 @@ storageEstado.use((req, res, next) => {
     next();
 })
 
-storageEstado.get("/:id?", proxyEstado ,(req,res)=>{
-    let sql = (req.params.id)
-        ? [`SELECT * FROM estado WHERE id_estado = ?`, req.params.id]
-        : [`SELECT * FROM estado`];
+storageEstado.get("/:id?", proxyEstado, (req, res) => {
+    let sql = (req.params.id) ? [`SELECT * FROM estado WHERE id_estado = ?`, req.params.id] : [`SELECT * FROM estado`];
     con.query(...sql,
-        (err, data, fie)=>{
+        (err, data, fie) => {
             res.send(data);
         }
     );
 })
 
-storageEstado.post("/", proxyEstado ,(req, res) => {
+storageEstado.post("/", proxyEstado, (req, res) => {
     con.query(
         /*sql*/
         `INSERT INTO estado SET ?`,
@@ -41,7 +55,7 @@ storageEstado.post("/", proxyEstado ,(req, res) => {
 });
 
 
-storageEstado.put("/:id", proxyEstado ,(req, res) => {
+storageEstado.put("/:id", proxyEstado, (req, res) => {
     con.query(
         /*sql*/
         `UPDATE estado SET ?  WHERE id_estado = ?`,
@@ -56,7 +70,7 @@ storageEstado.put("/:id", proxyEstado ,(req, res) => {
         }
     );
 });
-storageEstado.delete("/:id",(req, res) => {
+storageEstado.delete("/:id", (req, res) => {
     con.query(
         /*sql*/
         `DELETE FROM estado WHERE id_estado = ?`,

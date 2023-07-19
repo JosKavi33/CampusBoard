@@ -60,3 +60,5 @@ CREATE TABLE grupo (
     FOREIGN KEY (proyecto_grupo) REFERENCES proyecto(id_proyecto)
 );
 
+SELECT * FROM estado;
+
