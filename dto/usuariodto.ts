@@ -82,7 +82,7 @@ export class usuarioDTO {
         segundo_nombre: string,
         primer_apellido: string,
         segundo_apellido: string,
-        telefono: string,
+        telefono: string, 
         email: string,
         edad: number,
         documento: number,

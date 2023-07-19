@@ -5,7 +5,7 @@ import proxyGenero from '../middleware/generomiddleware.js';
 const storageGenero = Router();
 let con = undefined;
 
-storageDocumento.use(async (req, res, next) => {
+storageGenero.use(async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.params);
