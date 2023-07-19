@@ -8,12 +8,14 @@ import storageTarea from './routes/tareas.js';
 import storageProyecto from './routes/proyecto.js';
 import storageUsuario from './routes/usuario.js';
 import storageGrupo from './routes/grupo.js';
+import cookieParser from 'cookie-parser';
 
 
 dotenv.config();
 const appExpress = express();
 
 appExpress.use(express.json());
+appExpress.use(cookieParser());
 appExpress.use("/estado", storageEstado);
 appExpress.use("/documento", storageDocumento);
 appExpress.use("/genero", storageGenero);
@@ -25,6 +27,6 @@ appExpress.use("/grupo", storageGrupo);
 
 
 const config =JSON.parse(process.env.MY_CONFIG);
-appExpress.listen(config, ()=>console.log(`http://${config.hostname}:${config.port}`));
+appExpress.listen(5030, ()=>console.log(`http://${config.hostname}:${config.port}`));
 
 

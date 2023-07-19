@@ -14,8 +14,8 @@ storageDocumento.use("/:id?", async (req, res, next) => {
             .setIssuedAt()
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-        /* res.send({jwt}) */;
-        req.jwt = jwt;
+        
+        res.cookie('token', jwt, {httpOnly: true});
         next();
     } catch (err) {
         console.error('Error al generar el JWT:', err.message);
@@ -30,15 +30,14 @@ storageDocumento.use((req, res, next) => {
 })
 
 storageDocumento.get("/:id?", proxyDocumento ,async (req,res)=>{
-    const jwt = req.jwt; 
+    const jwt = req.cookies.token; 
 
-    const encoder = new TextEncoder();
+    const encoder = new TextEncoder();  
     const jwtData = await jwtVerify(
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-    console.log(jwtData); 
-    let sql = (req.jwt)
+    let sql = (jwtData.payload.id)
         ? [`SELECT * FROM documento WHERE id_documento = ?`, jwtData.payload.id] 
         : [`SELECT * FROM documento`];
     con.query(...sql,
