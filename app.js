@@ -14,6 +14,7 @@ import storageEmail from './routes/email.js';
 import storageProyectoUsuario from './routes/proyecto_usuario.js';
 import storageTareaUsuario from './routes/tarea_usuario.js';
 import storageGrupoUsuario from './routes/grupo_usuario.js';
+import storageDocumentoUsuario from './routes/documento_usuario.js';
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ appExpress.use("/email", storageEmail);
 appExpress.use("/proyecto_usuario", storageProyectoUsuario);
 appExpress.use("/tarea_usuario", storageTareaUsuario);
 appExpress.use("/grupo_usuario", storageGrupoUsuario);
+appExpress.use("/documento_usuario" , storageDocumentoUsuario);
 
 const config =JSON.parse(process.env.MY_CONFIG);
 appExpress.listen(config, ()=>console.log(`http://${config.hostname}:${config.port}`));
