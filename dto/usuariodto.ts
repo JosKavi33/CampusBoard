@@ -56,6 +56,6 @@ export class usuarioDTO {
         this.direccion = direccion_usuario;
         this.edad = edad_usuario;
         this.genero = genero_usuario;
-        this.ID2 = id; 
+        this.ID2 = id;  
     }
 } 

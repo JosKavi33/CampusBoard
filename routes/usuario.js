@@ -1,20 +1,21 @@
 import mysql from 'mysql2';
 import {Router} from 'express';
-import { SignJWT } from 'jose';
+import { SignJWT, jwtVerify } from 'jose';
 import proxyUsuario from '../middleware/usuariomiddleware.js';
 const storageUsuario = Router();
 let con = undefined;
 
-storageUsuario.use(async (req, res, next) => {
+storageUsuario.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.params);
-        const jwt = await jwtconstructor
+        const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-        /* res.send({jwt}); */
+        
+        res.cookie('token', jwt, {httpOnly: true});
         next();
     } catch (err) {
         console.error('Error al generar el JWT:', err.message);
@@ -29,9 +30,16 @@ storageUsuario.use((req, res, next) => {
     next();
 })
 
-storageUsuario.get("/:id?", proxyUsuario, (req,res)=>{
-    let sql = (req.params.id)
-        ? [`SELECT * FROM usuario WHERE id_usuario = ?`, req.params.id]
+storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
+    const jwt = req.cookies.token; 
+
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    let sql = (jwtData.payload.id)
+        ? [`SELECT * FROM usuario WHERE id_usuario = ?`, jwtData.payload.id]
         : [`SELECT * FROM usuario`];
     con.query(...sql,
         (err, data, fie)=>{
