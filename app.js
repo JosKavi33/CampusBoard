@@ -27,6 +27,6 @@ appExpress.use("/grupo", storageGrupo);
 
 
 const config =JSON.parse(process.env.MY_CONFIG);
-appExpress.listen(5030, ()=>console.log(`http://${config.hostname}:${config.port}`));
+appExpress.listen(config, ()=>console.log(`http://${config.hostname}:${config.port}`));
 
 

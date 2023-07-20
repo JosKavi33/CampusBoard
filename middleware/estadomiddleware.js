@@ -3,16 +3,25 @@ import 'reflect-metadata';
 import { plainToClass } from "class-transformer";
 import {estadoDTO} from "../dtocontroller/estadodto.js";
 import { validate } from "class-validator";
+import { jwtVerify } from "jose";
 
 const proxyEstado = express();
-proxyEstado.use("/:id",async(req,res,next)=>{ 
+proxyEstado.use(async(req,res,next)=>{
     try {
-        console.log(req.params);
-        let data = plainToClass(estadoDTO, req.body && req.params, { excludeExtraneousValues: true});
-        await validate(data);
+        const jwt = req.cookies.token;
+
+        const encoder = new TextEncoder();
+        const jwtData = await jwtVerify(
+            jwt,
+            encoder.encode(process.env.JWT_PRIVATE_KEY)
+        )
+        let data = plainToClass(estadoDTO, jwtData.payload, { excludeExtraneousValues: true});
+        await validate(data); 
         next();
     } catch (err) {
-        res.status(err.status).send(err);
+        const statusCode = err.status || 500;
+        const errorMessage = err.message || 'Ha ocurrido un error en el servidor.';
+        res.status(statusCode).send(errorMessage);
     }
 })
 export default proxyEstado;
