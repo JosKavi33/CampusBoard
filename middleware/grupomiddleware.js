@@ -3,15 +3,25 @@ import 'reflect-metadata';
 import { plainToClass } from "class-transformer";
 import {grupoDTO} from "../dtocontroller/grupodto.js";
 import { validate } from "class-validator";
+import { jwtVerify } from "jose";
 
 const proxyGrupo = express();
-proxyGrupo.use("/:id", async(req,res,next)=>{
+proxyGrupo.use(async(req,res,next)=>{
     try {
-        let data = plainToClass(grupoDTO, req.body && req.params , { excludeExtraneousValues: true});
-        await validate(data);
+        const jwt = req.cookies.token;
+
+        const encoder = new TextEncoder();
+        const jwtData = await jwtVerify(
+            jwt,
+            encoder.encode(process.env.JWT_PRIVATE_KEY)
+        )
+        let data = plainToClass(grupoDTO, jwtData.payload, { excludeExtraneousValues: true});
+        await validate(data); 
         next();
     } catch (err) {
-        res.status(err.status).send(err);
+        const statusCode = err.status || 500;
+        const errorMessage = err.message || 'Ha ocurrido un error en el servidor.';
+        res.status(statusCode).send(errorMessage);
     }
 })
 export default proxyGrupo;

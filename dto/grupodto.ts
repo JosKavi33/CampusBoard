@@ -5,34 +5,28 @@ export class grupoDTO {
 
     @Expose({ name: 'id_grupo' })
     @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato id_grupo incumple los parametros acordados`};},{ toClassOnly: true})
-    id_grupo: number;
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato ID incumple los parametros acordados`};},{ toClassOnly: true})
+    ID: number;
 
-    @Expose({ name: 'desarrollador_grupo' })
-    @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato desarrollador_grupo incumple los parametros acordados`};},{ toClassOnly: true})
-    desarrollador_grupo: number;
-
-    @Expose({ name: 'proyecto_grupo' })
-    @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato proyecto_grupo incumple los parametros acordados`};},{ toClassOnly: true})
-    proyecto_grupo: number;
+    @Expose({ name: 'nombre_grupo' })
+    /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_estado es obligatorio` }}})
+    @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_estado no puede pasar os 30 caracteres`}}}) */
+    @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value) || typeof value=="undefined" ) return value; else throw {status: 400, message:`El dato grupo incumple los parametros acordados`};},{ toClassOnly: true})
+    grupo: string;
 
     @Expose({ name: 'id' })
     @IsNumber()
     @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato id incumple los parametros acordados`};},{ toClassOnly: true})
-    id: number;
- 
+    ID2: number;
+
 
     constructor(
-        ID: number,
-        desarrollador: number,
-        proyecto: number,
-        ID2: number,
+        id_grupo: number,
+        nombre_grupo: string,
+        id: number
     ) {
-        this.id_grupo = ID;
-        this.desarrollador_grupo = desarrollador;
-        this.proyecto_grupo = proyecto;
-        this.id = ID2;
+        this.ID = id_grupo;
+        this.grupo = nombre_grupo;
+        this.ID2 = id;
     }
 }

@@ -10,11 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Expose, Transform } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 export class grupoDTO {
-    constructor(ID, desarrollador, proyecto, ID2) {
-        this.id_grupo = ID;
-        this.desarrollador_grupo = desarrollador;
-        this.proyecto_grupo = proyecto;
-        this.id = ID2;
+    constructor(id_grupo, nombre_grupo, id) {
+        this.ID = id_grupo;
+        this.grupo = nombre_grupo;
+        this.ID2 = id;
     }
 }
 __decorate([
@@ -23,27 +22,20 @@ __decorate([
     Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
         return Math.floor(value);
     else
-        throw { status: 400, message: `El dato id_grupo incumple los parametros acordados` }; }, { toClassOnly: true }),
+        throw { status: 400, message: `El dato ID incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], grupoDTO.prototype, "id_grupo", void 0);
+], grupoDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'desarrollador_grupo' }),
-    IsNumber(),
-    Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
-        return Math.floor(value);
+    Expose({ name: 'nombre_grupo' })
+    /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_estado es obligatorio` }}})
+    @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_estado no puede pasar os 30 caracteres`}}}) */
+    ,
+    Transform(({ value }) => { if (/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value) || typeof value == "undefined")
+        return value;
     else
-        throw { status: 400, message: `El dato desarrollador_grupo incumple los parametros acordados` }; }, { toClassOnly: true }),
-    __metadata("design:type", Number)
-], grupoDTO.prototype, "desarrollador_grupo", void 0);
-__decorate([
-    Expose({ name: 'proyecto_grupo' }),
-    IsNumber(),
-    Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
-        return Math.floor(value);
-    else
-        throw { status: 400, message: `El dato proyecto_grupo incumple los parametros acordados` }; }, { toClassOnly: true }),
-    __metadata("design:type", Number)
-], grupoDTO.prototype, "proyecto_grupo", void 0);
+        throw { status: 400, message: `El dato grupo incumple los parametros acordados` }; }, { toClassOnly: true }),
+    __metadata("design:type", String)
+], grupoDTO.prototype, "grupo", void 0);
 __decorate([
     Expose({ name: 'id' }),
     IsNumber(),
@@ -52,4 +44,4 @@ __decorate([
     else
         throw { status: 400, message: `El dato id incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], grupoDTO.prototype, "id", void 0);
+], grupoDTO.prototype, "ID2", void 0);

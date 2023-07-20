@@ -29,7 +29,7 @@ storageDocumento.use((req, res, next) => {
     next();
 })
 
-storageDocumento.get("/:id?", proxyDocumento ,async (req,res)=>{
+storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
     const jwt = req.cookies.token; 
 
     const encoder = new TextEncoder();  
