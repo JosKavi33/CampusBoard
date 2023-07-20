@@ -1,20 +1,21 @@
 import mysql from 'mysql2';
 import {Router} from 'express';
-import { SignJWT } from 'jose';
+import { SignJWT, jwtVerify } from 'jose';
 import proxyRol from '../middleware/rolmiddleware.js';
 const storageRol = Router();
 let con = undefined;
 
-storageRol.use(async (req, res, next) => {
+storageRol.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.params);
-        const jwt = await jwtconstructor
+        const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-        /* res.send({jwt}); */
+        
+        res.cookie('token', jwt, {httpOnly: true});
         next();
     } catch (err) {
         console.error('Error al generar el JWT:', err.message);
@@ -29,9 +30,16 @@ storageRol.use((req, res, next) => {
     next();
 })
 
-storageRol.get("/:id?", proxyRol ,(req,res)=>{
-    let sql = (req.params.id)
-        ? [`SELECT * FROM rol WHERE id_rol = ?`, req.params.id]
+storageRol.get("/:id?", proxyRol , async (req,res)=>{
+    const jwt = req.cookies.token; 
+
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    let sql = (jwtData.payload.id)
+        ? [`SELECT * FROM rol WHERE id_rol = ?`, jwtData.payload.id]
         : [`SELECT * FROM rol`];
     con.query(...sql,
         (err, data, fie)=>{

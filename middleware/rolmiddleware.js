@@ -6,7 +6,7 @@ import { validate } from "class-validator";
 import { jwtVerify } from "jose";
 
 const proxyRol = express();
-proxyDocumento.use(async(req,res,next)=>{
+proxyRol.use(async(req,res,next)=>{
     try {
         const jwt = req.cookies.token;
 
@@ -15,7 +15,7 @@ proxyDocumento.use(async(req,res,next)=>{
             jwt,
             encoder.encode(process.env.JWT_PRIVATE_KEY)
         )
-        let data = plainToClass(documentoDTO, jwtData.payload, { excludeExtraneousValues: true});
+        let data = plainToClass(rolDTO, jwtData.payload, { excludeExtraneousValues: true});
         await validate(data); 
         next();
     } catch (err) {
