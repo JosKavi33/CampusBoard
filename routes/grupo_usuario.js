@@ -1,11 +1,11 @@
 import mysql from 'mysql2';
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose';
-import proxyTareaUsuario from '../middleware/tarea_usuariomiddleware.js'; 
-const storageTareaUsuario = Router();
+import proxyGrupoUsuario from '../middleware/grupo_usuariomiddleware.js'; 
+const storageGrupoUsuario = Router();
 let con = undefined;
 
-storageTareaUsuario.use("/:id?", async (req, res, next) => {
+storageGrupoUsuario.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.params);
@@ -23,13 +23,13 @@ storageTareaUsuario.use("/:id?", async (req, res, next) => {
     }
 });
 
-storageTareaUsuario.use((req, res, next) => {
+storageGrupoUsuario.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
 
-storageTareaUsuario.get("/:id?", proxyTareaUsuario , async (req,res)=>{
+storageGrupoUsuario.get("/:id?", proxyGrupoUsuario , async (req,res)=>{
     const jwt = req.cookies.token; 
 
     const encoder = new TextEncoder();  
@@ -38,8 +38,8 @@ storageTareaUsuario.get("/:id?", proxyTareaUsuario , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM tarea_usuario WHERE id_tarea_usuario = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM tarea_usuario`];
+        ? [`SELECT * FROM grupo_usuario WHERE id_grupo_usuario = ?`, jwtData.payload.id] 
+        : [`SELECT * FROM grupo_usuario`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);
@@ -47,14 +47,14 @@ storageTareaUsuario.get("/:id?", proxyTareaUsuario , async (req,res)=>{
     );
 })
 
-storageTareaUsuario.post("/", proxyTareaUsuario ,(req, res) => {
+storageGrupoUsuario.post("/", proxyGrupoUsuario ,(req, res) => {
     con.query(
         /*sql*/
-        `INSERT INTO tarea_usuario SET ?`,
+        `INSERT INTO grupo_usuario SET ?`,
         req.body,
         (err, result) => {
             if (err) {
-                console.error('Error al crear tarea_usuario:', err.message);
+                console.error('Error al crear grupo_usuario:', err.message);
                 res.sendStatus(500);
             } else {
                 res.sendStatus(201);
@@ -64,14 +64,14 @@ storageTareaUsuario.post("/", proxyTareaUsuario ,(req, res) => {
 });
 
 
-storageTareaUsuario.put("/:id", proxyTareaUsuario ,(req, res) => {
+storageGrupoUsuario.put("/:id", proxyGrupoUsuario ,(req, res) => {
     con.query(
         /*sql*/
-        `UPDATE tarea_usuario SET ?  WHERE id_tarea_usuario = ?`,
+        `UPDATE grupo_usuario SET ?  WHERE id_grupo_usuario = ?`,
         [req.body, req.params.id],
         (err, result) => {
             if (err) {
-                console.error('Error al actualizar tarea_usuario:', err.message);
+                console.error('Error al actualizar proyecto_usuario:', err.message);
                 res.sendStatus(500);
             } else {
                 res.sendStatus(200);
@@ -79,14 +79,14 @@ storageTareaUsuario.put("/:id", proxyTareaUsuario ,(req, res) => {
         }
     );
 });
-storageTareaUsuario.delete("/:id",(req, res) => {
+storageGrupoUsuario.delete("/:id",(req, res) => {
     con.query(
         /*sql*/
-        `DELETE FROM tarea_usuario WHERE id_tarea_usuario = ?`,
+        `DELETE FROM grupo_usuario WHERE id_grupo_usuario = ?`,
         [req.params.id],
         (err, result) => {
             if (err) {
-                console.error('Error al eliminar tarea_usuario:', err.message);
+                console.error('Error al eliminar grupo_usuario:', err.message);
                 res.sendStatus(500);
             } else {
                 res.sendStatus(200);
@@ -96,4 +96,4 @@ storageTareaUsuario.delete("/:id",(req, res) => {
 });
 
 
-export default storageTareaUsuario;
+export default storageGrupoUsuario;
