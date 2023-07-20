@@ -5,8 +5,8 @@ export class usuarioDTO {
 
     @Expose({ name: 'id_usuario' })
     @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato id_usuario incumple los parametros acordados`};},{ toClassOnly: true})
-    ID: number;
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato usuario incumple los parametros acordados`};},{ toClassOnly: true})
+    ID: number; 
 
     @Expose({ name: 'nombre_usuario' })
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_usuario es obligatorio` }}})

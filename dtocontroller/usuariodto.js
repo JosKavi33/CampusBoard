@@ -26,7 +26,7 @@ __decorate([
     Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
         return Math.floor(value);
     else
-        throw { status: 400, message: `El dato id_usuario incumple los parametros acordados` }; }, { toClassOnly: true }),
+        throw { status: 400, message: `El dato usuario incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
 ], usuarioDTO.prototype, "ID", void 0);
 __decorate([
