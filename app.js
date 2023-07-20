@@ -12,6 +12,7 @@ import cookieParser from 'cookie-parser';
 import storageTelefono from './routes/telefono.js';
 import storageEmail from './routes/email.js';
 import storageProyectoUsuario from './routes/proyecto_usuario.js';
+import storageTareaUsuario from './routes/tarea_usuario.js';
 
 
 dotenv.config();
@@ -30,6 +31,7 @@ appExpress.use("/grupo", storageGrupo);
 appExpress.use("/telefono", storageTelefono);
 appExpress.use("/email", storageEmail);
 appExpress.use("/proyecto_usuario", storageProyectoUsuario);
+appExpress.use("/tarea_usuario", storageTareaUsuario);
 
 const config =JSON.parse(process.env.MY_CONFIG);
 appExpress.listen(config, ()=>console.log(`http://${config.hostname}:${config.port}`));
