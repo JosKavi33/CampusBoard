@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Expose, Transform } from 'class-transformer';
 import { IsNumber, IsDate } from 'class-validator';
 export class tareasDTO {
-    constructor(ID, tarea, estado, inicio, entrega, ID2) {
-        this.id_tarea = ID;
-        this.tarea_asignada = tarea;
-        this.estado_tarea = estado;
-        this.tiempo_inicio = inicio;
-        this.tiempo_entrega = entrega;
-        this.id = ID2;
+    constructor(id_tarea, tarea_asignada, estado_tarea, tiempo_inicio, tiempo_entrega, id) {
+        this.ID = id_tarea;
+        this.tarea = tarea_asignada;
+        this.estado = estado_tarea;
+        this.inicio = tiempo_inicio;
+        this.entrega = tiempo_entrega;
+        this.ID2 = id;
     }
 }
 __decorate([
@@ -27,7 +27,7 @@ __decorate([
     else
         throw { status: 400, message: `El dato id_tarea incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], tareasDTO.prototype, "id_tarea", void 0);
+], tareasDTO.prototype, "ID", void 0);
 __decorate([
     Expose({ name: 'tarea_asignada' })
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tarea_asignada es obligatorio` }}})
@@ -38,7 +38,7 @@ __decorate([
     else
         throw { status: 400, message: `El dato tipo_categoria incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", String)
-], tareasDTO.prototype, "tarea_asignada", void 0);
+], tareasDTO.prototype, "tarea", void 0);
 __decorate([
     Expose({ name: 'estado_tarea' }),
     IsNumber(),
@@ -47,7 +47,7 @@ __decorate([
     else
         throw { status: 400, message: `El dato estado_tarea incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], tareasDTO.prototype, "estado_tarea", void 0);
+], tareasDTO.prototype, "estado", void 0);
 __decorate([
     Expose({ name: 'tiempo_inicio' }),
     IsDate(),
@@ -56,7 +56,7 @@ __decorate([
     else
         throw { status: 400, message: `el parámetro ingresado para tiempo_inicio no es válido, debe seguir la sintaxis AAAA-MM-DD` }; }, { toClassOnly: true }),
     __metadata("design:type", Date)
-], tareasDTO.prototype, "tiempo_inicio", void 0);
+], tareasDTO.prototype, "inicio", void 0);
 __decorate([
     Expose({ name: 'tiempo_entrega' }),
     IsDate(),
@@ -65,7 +65,7 @@ __decorate([
     else
         throw { status: 400, message: `el parámetro ingresado para tiempo_entrega no es válido, debe seguir la sintaxis AAAA-MM-DD` }; }, { toClassOnly: true }),
     __metadata("design:type", Date)
-], tareasDTO.prototype, "tiempo_entrega", void 0);
+], tareasDTO.prototype, "entrega", void 0);
 __decorate([
     Expose({ name: 'id' }),
     IsNumber(),
@@ -74,4 +74,4 @@ __decorate([
     else
         throw { status: 400, message: `El dato id incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
-], tareasDTO.prototype, "id", void 0);
+], tareasDTO.prototype, "ID2", void 0);
