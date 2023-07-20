@@ -5,48 +5,48 @@ export class proyectoDTO {
 
     @Expose({ name: 'id_proyecto' })
     @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato id_proyecto incumple los parametros acordados`};},{ toClassOnly: true})
-    id_proyecto: number;
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato proyecto incumple los parametros acordados`};},{ toClassOnly: true})
+    ID: number;
 
     @Expose({ name: 'nombre_proyecto' })
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_proyecto es obligatorio` }}})
     @MaxLength(80, {message: ()=>{throw {status: 401, message: `El parametro nombre_proyecto no puede pasar os 30 caracteres`}}}) */
-    @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value)) return value; else throw {status: 400, message:`El dato tipo_categoria incumple los parametros acordados`};},{ toClassOnly: true})
-    nombre_proyecto: string;
+    @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value)) return value; else throw {status: 400, message:`El dato proyecto incumple los parametros acordados`};},{ toClassOnly: true})
+    proyecto: string;
 
     @Expose({ name: 'estado_proyecto' })
     @IsNumber()
-    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato estado_proyecto incumple los parametros acordados`};},{ toClassOnly: true})
-    estado_proyecto: number;
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato estado incumple los parametros acordados`};},{ toClassOnly: true})
+    estado: number;
 
     @Expose({ name: 'tiempo_inicio_proyecto' })
     @IsDate()
-    @Transform(({value})=> {if(/^\d{4}-\d{2}-\d{2}$/.test(value) || value == undefined) return(value); else throw {status: 400, message:`el parámetro ingresado para tiempo_inicio_proyecto no es válido, debe seguir la sintaxis AAAA-MM-DD`};}, {toClassOnly:true})
-    tiempo_inicio_proyecto: Date;
+    @Transform(({value})=> {if(/^\d{4}-\d{2}-\d{2}$/.test(value) || value == undefined) return(value); else throw {status: 400, message:`el parámetro ingresado para tiempo inicio no es válido, debe seguir la sintaxis AAAA-MM-DD`};}, {toClassOnly:true})
+    tiempo_inicio: Date;
 
     @Expose({ name: 'tiempo_entrega_proyecto' })
     @IsDate()
-    @Transform(({value})=> {if(/^\d{4}-\d{2}-\d{2}$/.test(value) || value == undefined) return(value); else throw {status: 400, message:`el parámetro ingresado para tiempo_entrega_proyecto no es válido, debe seguir la sintaxis AAAA-MM-DD`};}, {toClassOnly:true})
-    tiempo_entrega_proyecto: Date;
+    @Transform(({value})=> {if(/^\d{4}-\d{2}-\d{2}$/.test(value) || value == undefined) return(value); else throw {status: 400, message:`el parámetro ingresado para tiempo entrega no es válido, debe seguir la sintaxis AAAA-MM-DD`};}, {toClassOnly:true})
+    tiempo_entrega: Date;
 
     @Expose({ name: 'id' }) 
     @IsNumber()
     @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato id incumple los parametros acordados`};},{ toClassOnly: true})
-    id: number;
+    ID2: number;
 
     constructor(
-        ID: number,
-        tarea: string,
-        estado: number,
-        inicio: Date,
-        entrega: Date,
-        ID2: number
+        id_proyecto: number,
+        nombre_proyecto: string,
+        estado_proyecto: number,
+        tiempo_inicio_proyecto: Date,
+        tiempo_entrega_proyecto: Date,
+        id: number
     ) {
-        this.id_proyecto = ID;
-        this.nombre_proyecto = tarea;
-        this.estado_proyecto = estado;
-        this.tiempo_inicio_proyecto = inicio;
-        this.tiempo_entrega_proyecto = entrega;
-        this.id= ID2 
+        this.ID = id_proyecto;
+        this.proyecto = nombre_proyecto;
+        this.estado = estado_proyecto;
+        this.tiempo_inicio = tiempo_inicio_proyecto;
+        this.tiempo_entrega = tiempo_entrega_proyecto;
+        this.ID2= id 
     }
 }

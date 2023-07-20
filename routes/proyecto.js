@@ -1,22 +1,23 @@
 import mysql from 'mysql2';
 import {Router} from 'express';
-import { SignJWT } from 'jose';
+import { SignJWT, jwtVerify } from 'jose';
 import proxyProyecto from '../middleware/proyectomiddleware.js';
 const storageProyecto = Router();
 let con = undefined;
 
-storageProyecto.use(async (req, res, next) => {
+storageProyecto.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.params);
-        const jwt = await jwtconstructor
+        const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-        /* res.send({jwt}); */
+        
+        res.cookie('token', jwt, {httpOnly: true});
         next();
-    } catch (err) {
+    } catch (err) { 
         console.error('Error al generar el JWT:', err.message);
         res.sendStatus(500);
     }
@@ -29,9 +30,16 @@ storageProyecto.use((req, res, next) => {
     next();
 })
 
-storageProyecto.get("/:id?", proxyProyecto,(req,res)=>{
-    let sql = (req.params.id)
-        ? [`SELECT * FROM proyecto WHERE id_proyecto = ?`, req.params.id]
+storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
+    const jwt = req.cookies.token; 
+
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    let sql = (jwtData.payload.id)
+        ? [`SELECT * FROM proyecto WHERE id_proyecto = ?`, jwtData.payload.id] 
         : [`SELECT * FROM proyecto`];
     con.query(...sql,
         (err, data, fie)=>{
