@@ -24,7 +24,7 @@ CampusBoard, es una aplicacion de uso institucional, donde los campers podran en
 
 # DISEÑO BASE DE DATOS
 
-<img src="img/Screenshot from 2023-07-20 06-56-49.png" alt="MySQL Logo" width="1280">
+<img src="img/DiagramaCampusBoard.png" alt="MySQL Logo" width="1280">
 
 ## Tecnologias Implementadas
 
