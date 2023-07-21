@@ -8,7 +8,7 @@ let con = undefined;
 storageUsuario.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
-        const jwtconstructor = new SignJWT(req.params);
+        const jwtconstructor = new SignJWT(req.body);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
@@ -58,11 +58,12 @@ storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
     );
 })
 
-storageUsuario.post("/", proxyUsuario ,(req, res) => {
-    con.query(
+storageUsuario.post("/", proxyUsuario ,async (req, res) => {
+    console.log(getToken(req));
+    con.query( 
         /*sql*/
         `INSERT INTO usuario SET ?`,
-        req.body,
+        await getBody(req), 
         (err, result) => {
             if (err) {
                 console.error('Error al crear usuario:', err.message);
@@ -106,5 +107,18 @@ storageUsuario.delete("/:id",(req, res) => {
     );
 });
 
+const getBody = async (req) =>{
+    const jwt = req.cookies.token; 
+
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify( 
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    );
+
+    delete jwtData.payload.iat;
+    delete jwtData.payload.exp;
+    return jwtData.payload 
+}
 
 export default storageUsuario;
