@@ -5,51 +5,48 @@ CREATE TABLE estado (
     id_estado INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tipo_estado VARCHAR(30) NOT NULL
 );
-
 CREATE TABLE documento (
     id_documento INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    tipo_documento VARCHAR(50) NOT NULL
+    tipo_documento VARCHAR(50) NOT NULL,
+    numero_documento VARCHAR(50) NOT NULL
 );
-
 CREATE TABLE genero (
     id_genero INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tipo_genero VARCHAR(30) NOT NULL
 );
-
 CREATE TABLE rol (
     id_rol INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_rol VARCHAR(20) NOT NULL
 );
-
 CREATE TABLE grupo (
     id_grupo INT PRIMARY KEY NOT NULL,
     nombre_grupo VARCHAR(40) NOT NULL
 );
-
 CREATE TABLE usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_completo_usuario VARCHAR(120) NOT NULL,
-    numero_documento_usuario VARCHAR(50) NOT NULL,
+    numero_documento_usuario INT NOT NULL,
+    tipo_documento_usuario INT NOT NULL,
     direccion_usuario VARCHAR(100) NOT NULL,
     edad_usuario INT (3) NOT NULL,
     genero_usuario INT NOT NULL,
-    FOREIGN KEY (genero_usuario) REFERENCES genero(id_genero)
+    FOREIGN KEY (genero_usuario) REFERENCES genero(id_genero),
+    FOREIGN KEY (numero_documento_usuario) REFERENCES documento(id_documento),
+    FOREIGN KEY (tipo_documento_usuario) REFERENCES documento(id_documento)
 );
-
+SELECT *FROM documento;
 CREATE TABLE telefono (
     id_telefono INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     numero_telefono VARCHAR(15) NOT NULL,
     usuario_telefono INT NOT NULL,
     FOREIGN KEY (usuario_telefono) REFERENCES usuario(id_usuario)
 );
-
 CREATE TABLE email (
     id_email INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_email VARCHAR(50) NOT NULL,
     usuario_email INT NOT NULL,
     FOREIGN KEY (usuario_email) REFERENCES usuario(id_usuario)
 );
-
 CREATE TABLE tareas (
     id_tarea INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tarea_asignada VARCHAR(80) NOT NULL,
@@ -58,7 +55,6 @@ CREATE TABLE tareas (
     tiempo_entrega DATE NOT NULL,
     FOREIGN KEY (estado_tarea) REFERENCES estado(id_estado)
 );
-
 CREATE TABLE proyecto (
     id_proyecto INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_proyecto VARCHAR(20) NOT NULL,
@@ -67,7 +63,6 @@ CREATE TABLE proyecto (
     tiempo_entrega_proyecto DATE NOT NULL,
     FOREIGN KEY (estado_proyecto) REFERENCES estado(id_estado)
 );
-
 CREATE TABLE proyecto_usuario (
     id_proyecto_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_proyecto INT NOT NULL,
@@ -75,7 +70,6 @@ CREATE TABLE proyecto_usuario (
     FOREIGN KEY (id_proyecto) REFERENCES proyecto(id_proyecto),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
-
 CREATE TABLE tarea_usuario (
     id_tarea_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_tarea INT NOT NULL,
@@ -83,7 +77,6 @@ CREATE TABLE tarea_usuario (
     FOREIGN KEY (id_tarea) REFERENCES tareas(id_tarea),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
-
 CREATE TABLE grupo_usuario (
     id_grupo_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_grupo INT NOT NULL,
@@ -91,15 +84,6 @@ CREATE TABLE grupo_usuario (
     FOREIGN KEY (id_grupo) REFERENCES grupo(id_grupo),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
-
-CREATE TABLE documento_usuario (
-    id_documento_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    id_documento INT NOT NULL,
-    id_usuario INT NOT NULL,
-    FOREIGN KEY (id_documento) REFERENCES documento(id_documento),
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
-);
-
 CREATE TABLE rol_usuario (
     id_rol_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_rol INT NOT NULL,
@@ -121,17 +105,17 @@ INSERT INTO estado (tipo_estado) VALUES
 ('Suspendido'),
 ('Finalizado');
 
-INSERT INTO documento (tipo_documento) VALUES
-('DNI'),
-('Carnet de identidad'),
-('Pasaporte'),
-('Licencia de conducir'),
-('Cédula de ciudadanía'),
-('Tarjeta de residencia'),
-('Carnet estudiantil'),
-('Certificado de nacimiento'),
-('Certificado de matrimonio'),
-('Título universitario');
+INSERT INTO documento (tipo_documento, numero_documento) VALUES ('Cédula', '123456789'),
+('Pasaporte', 'ABC12345'),
+('Licencia de conducir', '78901234'),
+('DNI', 'XYZ98765'),
+('Carnet de identidad', '456123789'),
+('Visa', 'VISA123'),
+('Carnet estudiantil', 'ESTU456'),
+('RUC', 'RUC789012'),
+('Tarjeta de crédito', 'TARJ12345'),
+('DNI extranjero', 'DNI1234')
+;
 
 INSERT INTO genero (tipo_genero) VALUES
 ('Masculino'),
@@ -164,17 +148,19 @@ INSERT INTO grupo (id_grupo, nombre_grupo) VALUES
 (9, 'Grupo I'),
 (10, 'Grupo J');
 
-INSERT INTO usuario (nombre_completo_usuario, numero_documento_usuario ,direccion_usuario, edad_usuario, genero_usuario) VALUES
-('Juan Pérez', '123124123','Calle 123, Ciudad A', 30, 1),
-('María Gómez', '41241214','Avenida 456, Ciudad B', 25, 2),
-('Pedro López', '441341241','Carrera 789, Ciudad C', 28, 1),
-('Laura Torres', '545776456','Calle 321, Ciudad A', 22, 2),
-('Carlos Hernández', '64344343','Avenida 654, Ciudad B', 27, 1),
-('Ana García', '65578888','Carrera 987, Ciudad C', 29, 2),
-('Luis Martínez', '984853453','Calle 567, Ciudad A', 26, 1),
-('Mónica Rodríguez', '98952342','Avenida 432, Ciudad B', 24, 2),
-('Javier Gutiérrez', '23423423','Carrera 876, Ciudad C', 31, 1),
-('Martha Chávez', '23423424','Calle 890, Ciudad A', 23, 2);
+INSERT INTO usuario (nombre_completo_usuario, numero_documento_usuario, tipo_documento_usuario ,direccion_usuario, edad_usuario, genero_usuario) VALUES
+('Juan Pérez', 1, 1,'Calle 123, Ciudad A', 30, 1),
+('María Gómez', 2, 2,'Avenida 456, Ciudad B', 25, 2),
+('Pedro López', 3, 3,'Carrera 789, Ciudad C', 28, 1),
+('Laura Torres', 4, 4,'Calle 321, Ciudad A', 22, 2),
+('Carlos Hernández', 5, 5, 'Avenida 654, Ciudad B', 27, 1),
+('Ana García', 6, 6,'Carrera 987, Ciudad C', 29, 2),
+('Luis Martínez', 7, 7,'Calle 567, Ciudad A', 26, 1),
+('Mónica Rodríguez', 8,8, 'Avenida 432, Ciudad B', 24, 2),
+('Javier Gutiérrez', 9,9, 'Carrera 876, Ciudad C', 31, 1),
+('Martha Chávez', 10, 10,'Calle 890, Ciudad A', 23, 2);
+
+SELECT * FROM usuario;
 
 INSERT INTO telefono (numero_telefono, usuario_telefono) VALUES
 ('123456789', 1),
@@ -260,18 +246,6 @@ INSERT INTO grupo_usuario (id_grupo, id_usuario) VALUES
 (5, 9),
 (5, 10);
 
-INSERT INTO documento_usuario (id_documento, id_usuario) VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5),
-(6, 6),
-(7, 7),
-(8, 8),
-(9, 9),
-(10, 10);
-
 INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 (1, 1),
 (2, 2),
@@ -286,8 +260,11 @@ INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 
 SELECT * FROM usuario;
 SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
+documento.numero_documento AS numero_documento_usuario,
+documento.tipo_documento AS tipo_documento_usuario,
 genero.tipo_genero AS genero_usuario
 FROM usuario 
+INNER JOIN documento  ON numero_documento_usuario = documento.id_documento
 INNER JOIN genero  ON genero_usuario = genero.id_genero;
 SELECT * FROM telefono;
 SELECT id_telefono, numero_telefono,
@@ -333,14 +310,6 @@ SELECT
     u.nombre_completo_usuario AS nombre_usuario
 FROM grupo_usuario pu
 INNER JOIN grupo p ON pu.id_grupo = p.id_grupo
-INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
-SELECT * FROM documento_usuario;
-SELECT 
-    pu.id_documento_usuario,
-    p.tipo_documento AS numero_documento,
-    u.nombre_completo_usuario AS nombre_usuario
-FROM documento_usuario pu
-INNER JOIN documento p ON pu.id_documento = p.id_documento
 INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 SELECT * FROM rol_usuario;
 SELECT 

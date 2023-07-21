@@ -14,17 +14,21 @@ export class usuarioDTO {
     @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value)) return value; else throw {status: 400, message:`El dato tipo_categoria incumple los parametros acordados`};},{ toClassOnly: true})
     nombre: string;
 
+    @Expose({ name: 'numero_documento_usuario' })
+    @IsNumber()
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato documento incumple los parametros acordados`};},{ toClassOnly: true})
+    numero_documento: number;
+
+    @Expose({ name: 'tipo_documento_usuario' })
+    @IsNumber()
+    @Transform(({value})=>{if(/^[0-9]+$/.test(value) || value==undefined ) return Math.floor(value); else throw {status: 400, message:`El dato tipo_documento incumple los parametros acordados`};},{ toClassOnly: true})
+    tipo_documento: number;
+
     @Expose({ name: 'direccion_usuario' })
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro telefono_usuario es obligatorio` }}})
     @MaxLength(15, {message: ()=>{throw {status: 401, message: `El parametro telefono_usuario no puede pasar os 30 caracteres`}}}) */
     @Transform(({value})=>{if(/^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑüÜ\s,.# @]+$/.test(value)) return value; else throw {status: 400, message:`El dato usu_direccion incumple los parametros acordados`};},{ toClassOnly: true})
     direccion: string;
-
-    @Expose({ name: 'numero_documento_usuario' })
-    /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro telefono_usuario es obligatorio` }}})
-    @MaxLength(15, {message: ()=>{throw {status: 401, message: `El parametro telefono_usuario no puede pasar os 30 caracteres`}}}) */
-    @Transform(({value})=>{if(/^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑüÜ\s,.# @]+$/.test(value)) return value; else throw {status: 400, message:`El dato usu_direccion incumple los parametros acordados`};},{ toClassOnly: true})
-    numero_documento: string;
 
     @Expose({ name: 'edad_usuario' })
     @IsNumber()
@@ -44,7 +48,8 @@ export class usuarioDTO {
     constructor(
         id_usuario: number,
         nombre_usuario: string,
-        numero_documento_usuario: string,
+        numero_documento_usuario: number,
+        tipo_documento_usuario: number,
         direccion_usuario: string,
         edad_usuario: number,
         genero_usuario: number,
@@ -53,6 +58,7 @@ export class usuarioDTO {
         this.ID = id_usuario;
         this.nombre = nombre_usuario;
         this.numero_documento= numero_documento_usuario;
+        this.tipo_documento= tipo_documento_usuario;
         this.direccion = direccion_usuario;
         this.edad = edad_usuario;
         this.genero = genero_usuario;

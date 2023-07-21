@@ -10,9 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Expose, Transform } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 export class documentoDTO {
-    constructor(id_documento, tipo_documento, id) {
+    constructor(id_documento, tipo_documento, numero_documento, id) {
         this.ID = id_documento;
-        this.documento = tipo_documento;
+        this.tipoDocumento = tipo_documento;
+        this.numeroDocumento = numero_documento;
         this.ID2 = id;
     }
 }
@@ -35,7 +36,18 @@ __decorate([
     else
         throw { status: 400, message: `El dato tipo_categoria incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", String)
-], documentoDTO.prototype, "documento", void 0);
+], documentoDTO.prototype, "tipoDocumento", void 0);
+__decorate([
+    Expose({ name: 'numero_documento' })
+    /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_documento es obligatorio` }}})
+    @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_documento no puede pasar os 30 caracteres`}}}) */
+    ,
+    Transform(({ value }) => { if (/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value))
+        return value;
+    else
+        throw { status: 400, message: `El dato tipo_categoria incumple los parametros acordados` }; }, { toClassOnly: true }),
+    __metadata("design:type", String)
+], documentoDTO.prototype, "numeroDocumento", void 0);
 __decorate([
     Expose({ name: 'id' }),
     IsNumber(),
