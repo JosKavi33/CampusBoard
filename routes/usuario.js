@@ -39,19 +39,17 @@ storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
-        documento.numero_documento AS numero_documento_usuario,
+        ? [`SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
         documento.tipo_documento AS tipo_documento_usuario,
         genero.tipo_genero AS genero_usuario
         FROM usuario 
-        INNER JOIN documento  ON numero_documento_usuario = documento.id_documento
+        INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
         INNER JOIN genero  ON genero_usuario = genero.id_genero WHERE id_usuario = ?`, jwtData.payload.id]
-        : [`SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
-        documento.numero_documento AS numero_documento_usuario,
+        : [`SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
         documento.tipo_documento AS tipo_documento_usuario,
         genero.tipo_genero AS genero_usuario
         FROM usuario 
-        INNER JOIN documento  ON numero_documento_usuario = documento.id_documento
+        INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
         INNER JOIN genero  ON genero_usuario = genero.id_genero`];
     con.query(...sql,
         (err, data, fie)=>{

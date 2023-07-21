@@ -48,15 +48,14 @@ __decorate([
         return Math.floor(value);
     else
         throw { status: 400, message: `El dato documento incumple los parametros acordados` }; }, { toClassOnly: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], usuarioDTO.prototype, "numero_documento", void 0);
 __decorate([
     Expose({ name: 'tipo_documento_usuario' }),
-    IsNumber(),
-    Transform(({ value }) => { if (/^[0-9]+$/.test(value) || value == undefined)
-        return Math.floor(value);
+    Transform(({ value }) => { if (/^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑüÜ\s,.# @]+$/.test(value))
+        return value;
     else
-        throw { status: 400, message: `El dato tipo_documento incumple los parametros acordados` }; }, { toClassOnly: true }),
+        throw { status: 400, message: `El dato usu_direccion incumple los parametros acordados` }; }, { toClassOnly: true }),
     __metadata("design:type", Number)
 ], usuarioDTO.prototype, "tipo_documento", void 0);
 __decorate([

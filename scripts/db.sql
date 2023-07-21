@@ -7,8 +7,7 @@ CREATE TABLE estado (
 );
 CREATE TABLE documento (
     id_documento INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    tipo_documento VARCHAR(50) NOT NULL,
-    numero_documento VARCHAR(50) NOT NULL
+    tipo_documento VARCHAR(50) NOT NULL
 );
 CREATE TABLE genero (
     id_genero INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -25,13 +24,12 @@ CREATE TABLE grupo (
 CREATE TABLE usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_completo_usuario VARCHAR(120) NOT NULL,
-    numero_documento_usuario INT NOT NULL,
+    numero_documento_usuario VARCHAR (50) NOT NULL,
     tipo_documento_usuario INT NOT NULL,
     direccion_usuario VARCHAR(100) NOT NULL,
     edad_usuario INT (3) NOT NULL,
     genero_usuario INT NOT NULL,
     FOREIGN KEY (genero_usuario) REFERENCES genero(id_genero),
-    FOREIGN KEY (numero_documento_usuario) REFERENCES documento(id_documento),
     FOREIGN KEY (tipo_documento_usuario) REFERENCES documento(id_documento)
 );
 SELECT *FROM documento;
@@ -105,16 +103,16 @@ INSERT INTO estado (tipo_estado) VALUES
 ('Suspendido'),
 ('Finalizado');
 
-INSERT INTO documento (tipo_documento, numero_documento) VALUES ('Cédula', '123456789'),
-('Pasaporte', 'ABC12345'),
-('Licencia de conducir', '78901234'),
-('DNI', 'XYZ98765'),
-('Carnet de identidad', '456123789'),
-('Visa', 'VISA123'),
-('Carnet estudiantil', 'ESTU456'),
-('RUC', 'RUC789012'),
-('Tarjeta de crédito', 'TARJ12345'),
-('DNI extranjero', 'DNI1234')
+INSERT INTO documento (tipo_documento) VALUES ('Cédula'),
+('Pasaporte'),
+('Licencia de conducir'),
+('DNI'),
+('Carnet de identidad'),
+('Visa'),
+('Carnet estudiantil'),
+('RUC'),
+('Tarjeta de crédito'),
+('DNI extranjero')
 ;
 
 INSERT INTO genero (tipo_genero) VALUES
@@ -149,16 +147,16 @@ INSERT INTO grupo (id_grupo, nombre_grupo) VALUES
 (10, 'Grupo J');
 
 INSERT INTO usuario (nombre_completo_usuario, numero_documento_usuario, tipo_documento_usuario ,direccion_usuario, edad_usuario, genero_usuario) VALUES
-('Juan Pérez', 1, 1,'Calle 123, Ciudad A', 30, 1),
-('María Gómez', 2, 2,'Avenida 456, Ciudad B', 25, 2),
-('Pedro López', 3, 3,'Carrera 789, Ciudad C', 28, 1),
-('Laura Torres', 4, 4,'Calle 321, Ciudad A', 22, 2),
-('Carlos Hernández', 5, 5, 'Avenida 654, Ciudad B', 27, 1),
-('Ana García', 6, 6,'Carrera 987, Ciudad C', 29, 2),
-('Luis Martínez', 7, 7,'Calle 567, Ciudad A', 26, 1),
-('Mónica Rodríguez', 8,8, 'Avenida 432, Ciudad B', 24, 2),
-('Javier Gutiérrez', 9,9, 'Carrera 876, Ciudad C', 31, 1),
-('Martha Chávez', 10, 10,'Calle 890, Ciudad A', 23, 2);
+('Juan Pérez', '1413414', 1,'Calle 123, Ciudad A', 30, 1),
+('María Gómez', '343234234', 2,'Avenida 456, Ciudad B', 25, 2),
+('Pedro López', '5234232352', 3,'Carrera 789, Ciudad C', 28, 1),
+('Laura Torres', '32342342', 4,'Calle 321, Ciudad A', 22, 2),
+('Carlos Hernández', '76745745', 5, 'Avenida 654, Ciudad B', 27, 1),
+('Ana García', '4234242', 6,'Carrera 987, Ciudad C', 29, 2),
+('Luis Martínez', '1231231', 7,'Calle 567, Ciudad A', 26, 1),
+('Mónica Rodríguez', '25525225',8, 'Avenida 432, Ciudad B', 24, 2),
+('Javier Gutiérrez', '235235252',9, 'Carrera 876, Ciudad C', 31, 1),
+('Martha Chávez', '23123141', 10,'Calle 890, Ciudad A', 23, 2);
 
 SELECT * FROM usuario;
 
@@ -259,12 +257,11 @@ INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 (10, 10);
 
 SELECT * FROM usuario;
-SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
-documento.numero_documento AS numero_documento_usuario,
+SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
 documento.tipo_documento AS tipo_documento_usuario,
 genero.tipo_genero AS genero_usuario
 FROM usuario 
-INNER JOIN documento  ON numero_documento_usuario = documento.id_documento
+INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
 INNER JOIN genero  ON genero_usuario = genero.id_genero;
 SELECT * FROM telefono;
 SELECT id_telefono, numero_telefono,
