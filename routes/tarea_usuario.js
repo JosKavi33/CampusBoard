@@ -38,8 +38,20 @@ storageTareaUsuario.get("/:id?", proxyTareaUsuario , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM tarea_usuario WHERE id_tarea_usuario = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM tarea_usuario`];
+        ? [`SELECT 
+        pu.id_tarea_usuario,
+        p.tarea_asignada AS nombre_tarea,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM tarea_usuario pu
+    INNER JOIN tareas p ON pu.id_tarea = p.id_tarea
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario WHERE id_tarea_usuario = ?`, jwtData.payload.id] 
+        : [`SELECT 
+        pu.id_tarea_usuario,
+        p.tarea_asignada AS nombre_tarea,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM tarea_usuario pu
+    INNER JOIN tareas p ON pu.id_tarea = p.id_tarea
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

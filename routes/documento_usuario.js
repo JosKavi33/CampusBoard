@@ -38,8 +38,20 @@ storageDocumentoUsuario.get("/:id?", proxyDocumenoUsuario , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM documento_usuario WHERE id_documento_usuario = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM documento_usuario`];
+        ? [`SELECT 
+        pu.id_documento_usuario,
+        p.tipo_documento AS numero_documento,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM documento_usuario pu
+    INNER JOIN documento p ON pu.id_documento = p.id_documento
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario WHERE id_documento_usuario = ?`, jwtData.payload.id] 
+        : [`SELECT 
+        pu.id_documento_usuario,
+        p.tipo_documento AS numero_documento,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM documento_usuario pu
+    INNER JOIN documento p ON pu.id_documento = p.id_documento
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

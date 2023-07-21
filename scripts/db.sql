@@ -28,8 +28,8 @@ CREATE TABLE grupo (
 
 CREATE TABLE usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre_usuario VARCHAR(20) NOT NULL,
-    apellido_usuario VARCHAR(20) NOT NULL,
+    nombre_completo_usuario VARCHAR(120) NOT NULL,
+    numero_documento_usuario VARCHAR(50) NOT NULL,
     direccion_usuario VARCHAR(100) NOT NULL,
     edad_usuario INT (3) NOT NULL,
     genero_usuario INT NOT NULL,
@@ -164,17 +164,17 @@ INSERT INTO grupo (id_grupo, nombre_grupo) VALUES
 (9, 'Grupo I'),
 (10, 'Grupo J');
 
-INSERT INTO usuario (nombre_usuario, apellido_usuario, direccion_usuario, edad_usuario, genero_usuario) VALUES
-('Juan', 'Pérez', 'Calle 123, Ciudad A', 30, 1),
-('María', 'Gómez', 'Avenida 456, Ciudad B', 25, 2),
-('Pedro', 'López', 'Carrera 789, Ciudad C', 28, 1),
-('Laura', 'Torres', 'Calle 321, Ciudad A', 22, 2),
-('Carlos', 'Hernández', 'Avenida 654, Ciudad B', 27, 1),
-('Ana', 'García', 'Carrera 987, Ciudad C', 29, 2),
-('Luis', 'Martínez', 'Calle 567, Ciudad A', 26, 1),
-('Mónica', 'Rodríguez', 'Avenida 432, Ciudad B', 24, 2),
-('Javier', 'Gutiérrez', 'Carrera 876, Ciudad C', 31, 1),
-('Martha', 'Chávez', 'Calle 890, Ciudad A', 23, 2);
+INSERT INTO usuario (nombre_completo_usuario, numero_documento_usuario ,direccion_usuario, edad_usuario, genero_usuario) VALUES
+('Juan Pérez', '123124123','Calle 123, Ciudad A', 30, 1),
+('María Gómez', '41241214','Avenida 456, Ciudad B', 25, 2),
+('Pedro López', '441341241','Carrera 789, Ciudad C', 28, 1),
+('Laura Torres', '545776456','Calle 321, Ciudad A', 22, 2),
+('Carlos Hernández', '64344343','Avenida 654, Ciudad B', 27, 1),
+('Ana García', '65578888','Carrera 987, Ciudad C', 29, 2),
+('Luis Martínez', '984853453','Calle 567, Ciudad A', 26, 1),
+('Mónica Rodríguez', '98952342','Avenida 432, Ciudad B', 24, 2),
+('Javier Gutiérrez', '23423423','Carrera 876, Ciudad C', 31, 1),
+('Martha Chávez', '23423424','Calle 890, Ciudad A', 23, 2);
 
 INSERT INTO telefono (numero_telefono, usuario_telefono) VALUES
 ('123456789', 1),
@@ -283,5 +283,72 @@ INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 (8, 8),
 (9, 9),
 (10, 10);
+
+SELECT * FROM usuario;
+SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
+genero.tipo_genero AS genero_usuario
+FROM usuario 
+INNER JOIN genero  ON genero_usuario = genero.id_genero;
+SELECT * FROM telefono;
+SELECT id_telefono, numero_telefono,
+usuario.nombre_completo_usuario AS usuario_telefono
+FROM telefono 
+INNER JOIN usuario  ON usuario_telefono = usuario.id_usuario;
+SELECT * FROM email;
+SELECT id_email, nombre_email,
+usuario.nombre_completo_usuario AS usuario_email
+FROM email 
+INNER JOIN usuario  ON usuario_email = usuario.id_usuario;
+SELECT * FROM tareas;
+SELECT id_tarea, tarea_asignada, tiempo_inicio, tiempo_entrega,
+estado.tipo_estado AS estado_tarea
+FROM tareas 
+INNER JOIN estado  ON estado_tarea = estado.id_estado;
+SELECT * FROM proyecto;
+SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
+estado.tipo_estado AS estado_proyecto
+FROM proyecto 
+INNER JOIN estado  ON estado_proyecto = estado.id_estado;
+SELECT * FROM proyecto_usuario;
+SELECT 
+    pu.id_proyecto_usuario,
+    p.nombre_proyecto AS nombre_proyecto,
+    u.nombre_completo_usuario AS nombre_usuario
+FROM proyecto_usuario pu
+INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
+
+SELECT * FROM tarea_usuario;
+SELECT 
+    pu.id_tarea_usuario,
+    p.tarea_asignada AS nombre_tarea,
+    u.nombre_completo_usuario AS nombre_usuario
+FROM tarea_usuario pu
+INNER JOIN tareas p ON pu.id_tarea = p.id_tarea
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
+SELECT * FROM grupo_usuario;
+SELECT 
+    pu.id_grupo_usuario,
+    p.nombre_grupo AS nombre_grupo,
+    u.nombre_completo_usuario AS nombre_usuario
+FROM grupo_usuario pu
+INNER JOIN grupo p ON pu.id_grupo = p.id_grupo
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
+SELECT * FROM documento_usuario;
+SELECT 
+    pu.id_documento_usuario,
+    p.tipo_documento AS numero_documento,
+    u.nombre_completo_usuario AS nombre_usuario
+FROM documento_usuario pu
+INNER JOIN documento p ON pu.id_documento = p.id_documento
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
+SELECT * FROM rol_usuario;
+SELECT 
+    pu.id_rol_usuario,
+    p.nombre_rol AS nombre_rol,
+    u.nombre_completo_usuario AS nombre_usuario
+FROM rol_usuario pu
+INNER JOIN rol p ON pu.id_rol = p.id_rol
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 
 

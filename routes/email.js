@@ -38,8 +38,14 @@ storageEmail.get("/:id?", proxyEmail , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM email WHERE id_email = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM email`];
+        ? [`SELECT id_email, nombre_email,
+        usuario.nombre_completo_usuario AS usuario_email
+        FROM email 
+        INNER JOIN usuario  ON usuario_email = usuario.id_usuario WHERE id_email = ?`, jwtData.payload.id] 
+        : [`SELECT id_email, nombre_email,
+        usuario.nombre_completo_usuario AS usuario_email
+        FROM email 
+        INNER JOIN usuario  ON usuario_email = usuario.id_usuario;`]; 
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

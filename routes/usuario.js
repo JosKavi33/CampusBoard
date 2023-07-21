@@ -34,13 +34,19 @@ storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
     const jwt = req.cookies.token; 
 
     const encoder = new TextEncoder();  
-    const jwtData = await jwtVerify(
+    const jwtData = await jwtVerify( 
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM usuario WHERE id_usuario = ?`, jwtData.payload.id]
-        : [`SELECT * FROM usuario`];
+        ? [`SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
+        genero.tipo_genero AS genero_usuario
+        FROM usuario 
+        INNER JOIN genero  ON genero_usuario = genero.id_genero WHERE id_usuario = ?`, jwtData.payload.id]
+        : [`SELECT id_usuario, nombre_completo_usuario, direccion_usuario, edad_usuario, 
+        genero.tipo_genero AS genero_usuario
+        FROM usuario 
+        INNER JOIN genero  ON genero_usuario = genero.id_genero;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

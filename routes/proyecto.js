@@ -39,8 +39,14 @@ storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM proyecto WHERE id_proyecto = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM proyecto`];
+        ? [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
+        estado.tipo_estado AS estado_proyecto
+        FROM proyecto 
+        INNER JOIN estado  ON estado_proyecto = estado.id_estado WHERE id_proyecto = ?`, jwtData.payload.id] 
+        : [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
+        estado.tipo_estado AS estado_proyecto
+        FROM proyecto 
+        INNER JOIN estado  ON estado_proyecto = estado.id_estado;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

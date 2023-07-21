@@ -38,8 +38,20 @@ storageGrupoUsuario.get("/:id?", proxyGrupoUsuario , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM grupo_usuario WHERE id_grupo_usuario = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM grupo_usuario`];
+        ? [`SELECT 
+        pu.id_grupo_usuario,
+        p.nombre_grupo AS nombre_grupo,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM grupo_usuario pu
+    INNER JOIN grupo p ON pu.id_grupo = p.id_grupo
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario WHERE id_grupo_usuario = ?`, jwtData.payload.id] 
+        : [`SELECT 
+        pu.id_grupo_usuario,
+        p.nombre_grupo AS nombre_grupo,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM grupo_usuario pu
+    INNER JOIN grupo p ON pu.id_grupo = p.id_grupo
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);

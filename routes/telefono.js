@@ -38,9 +38,15 @@ storageTelefono.get("/:id?", proxyTelefono , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM telefono WHERE id_telefono = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM telefono`];
-    con.query(...sql,
+        ? [`SELECT id_telefono, numero_telefono,
+        usuario.nombre_completo_usuario AS usuario_telefono
+        FROM telefono 
+        INNER JOIN usuario  ON usuario_telefono = usuario.id_usuario WHERE id_telefono = ?`, jwtData.payload.id] 
+        : [`SELECT id_telefono, numero_telefono,
+        usuario.nombre_completo_usuario AS usuario_telefono
+        FROM telefono 
+        INNER JOIN usuario  ON usuario_telefono = usuario.id_usuario;`];
+    con.query(...sql, 
         (err, data, fie)=>{
             res.send(data);
         }

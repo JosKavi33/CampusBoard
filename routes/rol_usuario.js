@@ -38,8 +38,20 @@ storageRolUsuario.get("/:id?", proxyRolUsuario , async (req,res)=>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM rol_usuario WHERE id_rol_usuario = ?`, jwtData.payload.id] 
-        : [`SELECT * FROM rol_usuario`];
+        ? [`SELECT 
+        pu.id_rol_usuario,
+        p.nombre_rol AS nombre_rol,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM rol_usuario pu
+    INNER JOIN rol p ON pu.id_rol = p.id_rol
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario WHERE id_rol_usuario = ?`, jwtData.payload.id] 
+        : [`SELECT 
+        pu.id_rol_usuario,
+        p.nombre_rol AS nombre_rol,
+        u.nombre_completo_usuario AS nombre_usuario
+    FROM rol_usuario pu
+    INNER JOIN rol p ON pu.id_rol = p.id_rol
+    INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);
