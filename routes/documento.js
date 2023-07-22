@@ -8,20 +8,22 @@ let con = undefined;
 storageDocumento.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
-        const jwtconstructor = new SignJWT(req.body && req.params); 
+        const payload = { body: req.body, params: req.params, id: req.params.id  };
+        const jwtconstructor = new SignJWT(payload);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-            .setIssuedAt() 
-            .setExpirationTime("1h") 
-            .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-        
-        res.cookie('token', jwt, {httpOnly: true}); 
+            .setIssuedAt()
+            .setExpirationTime("1h")
+            .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
+        req.body = payload.body;
+        const maxAgeInSeconds = 3600; // 1 hora
+        res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
         next();  
     } catch (err) { 
         console.error('Error al generar el JWT:', err.message);
-        res.sendStatus(500);
+        res.sendStatus(500); 
     }
-}); 
+});
 
 storageDocumento.use((req, res, next) => {
 
@@ -38,6 +40,10 @@ storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
+
+    if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
+        return res.sendStatus(403);
+    }
     let sql = (jwtData.payload.id)
         ? [`SELECT * FROM documento WHERE id_documento = ?`, jwtData.payload.id] 
         : [`SELECT * FROM documento`];
@@ -106,7 +112,7 @@ const getBody = async (req) =>{
 
     delete jwtData.payload.iat;
     delete jwtData.payload.exp;
-    return jwtData.payload 
+    return jwtData.payload.body 
 }  
 
 export default storageDocumento;

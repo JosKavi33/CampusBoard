@@ -1,4 +1,4 @@
-import mysql from 'mysql2';
+import mysql, { raw } from 'mysql2';
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose';
 import proxyEmail from '../middleware/emailmiddleware.js';
@@ -8,7 +8,7 @@ let con = undefined;
 storageEmail.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
-        const jwtconstructor = new SignJWT(req.params);
+        const jwtconstructor = new SignJWT(req.body);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
@@ -45,7 +45,7 @@ storageEmail.get("/:id?", proxyEmail , async (req,res)=>{
         : [`SELECT id_email, nombre_email,
         usuario.nombre_completo_usuario AS usuario_email
         FROM email 
-        INNER JOIN usuario  ON usuario_email = usuario.id_usuario;`]; 
+        INNER JOIN usuario  ON usuario_email = usuario.id_usuario;`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);
@@ -53,11 +53,11 @@ storageEmail.get("/:id?", proxyEmail , async (req,res)=>{
     );
 })
 
-storageEmail.post("/", proxyEmail ,(req, res) => {
+storageEmail.post("/", proxyEmail ,async (req, res) => {
     con.query(
         /*sql*/
         `INSERT INTO email SET ?`,
-        req.body,
+        await getBody(req),
         (err, result) => {
             if (err) {
                 console.error('Error al crear email:', err.message);
@@ -68,8 +68,6 @@ storageEmail.post("/", proxyEmail ,(req, res) => {
         }
     );
 });
-
-
 storageEmail.put("/:id", proxyEmail ,(req, res) => {
     con.query(
         /*sql*/
@@ -100,6 +98,18 @@ storageEmail.delete("/:id",(req, res) => {
         }
     );
 });
+const getBody = async (req) =>{
+    const jwt = req.cookies.token; 
 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify( 
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    );
+
+    delete jwtData.payload.iat;
+    delete jwtData.payload.exp;
+    return jwtData.payload 
+}
 
 export default storageEmail;
