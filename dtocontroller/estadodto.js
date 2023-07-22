@@ -17,8 +17,9 @@ export class estadoDTO {
     }
 }
 __decorate([
-    Expose({ name: 'id_estado' }),
-    IsNumber(),
+    Expose({ name: 'id_estado' })
+    /* @IsNumber() */
+    ,
     Transform(({ value }) => { if (/^[0-9]+$/.test(value) || typeof value == "undefined")
         return Math.floor(value);
     else

@@ -8,7 +8,7 @@ let con = undefined;
 storageUsuario.use("/:id?", async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
-        const jwtconstructor = new SignJWT(req.body);
+        const jwtconstructor = new SignJWT(req.body && req.params); 
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
@@ -32,25 +32,14 @@ storageUsuario.use((req, res, next) => {
 
 storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
     const jwt = req.cookies.token; 
-
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify( 
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
     let sql = (jwtData.payload.id)
-        ? [`SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
-        documento.tipo_documento AS tipo_documento_usuario,
-        genero.tipo_genero AS genero_usuario
-        FROM usuario 
-        INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
-        INNER JOIN genero  ON genero_usuario = genero.id_genero WHERE id_usuario = ?`, jwtData.payload.id]
-        : [`SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
-        documento.tipo_documento AS tipo_documento_usuario,
-        genero.tipo_genero AS genero_usuario
-        FROM usuario 
-        INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
-        INNER JOIN genero  ON genero_usuario = genero.id_genero`];
+        ? [`SELECT * FROM usuario WHERE id_usuario = ?`, jwtData.payload.id]  
+        : [`SELECT * FROM usuario`];
     con.query(...sql,
         (err, data, fie)=>{
             res.send(data);
@@ -59,7 +48,6 @@ storageUsuario.get("/:id?", proxyUsuario, async (req,res)=>{
 })
 
 storageUsuario.post("/", proxyUsuario ,async (req, res) => {
-    console.log(getToken(req));
     con.query( 
         /*sql*/
         `INSERT INTO usuario SET ?`,
@@ -81,7 +69,7 @@ storageUsuario.put("/:id", proxyUsuario ,(req, res) => {
         /*sql*/
         `UPDATE usuario SET ?  WHERE id_usuario = ?`,
         [req.body, req.params.id],
-        (err, result) => {id_tarea
+        (err, result) => {
             if (err) {
                 console.error('Error al actualizar usuario:', err.message);
                 res.sendStatus(500);
@@ -121,4 +109,4 @@ const getBody = async (req) =>{
     return jwtData.payload 
 }
 
-export default storageUsuario;
+export default storageUsuario; 

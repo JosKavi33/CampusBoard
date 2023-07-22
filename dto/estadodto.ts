@@ -4,7 +4,7 @@ import { IsNumber, IsString, MaxLength, IsDefined } from 'class-validator';
 export class estadoDTO { 
 
     @Expose({ name: 'id_estado' })
-    @IsNumber()
+    /* @IsNumber() */
     @Transform(({value})=>{if(/^[0-9]+$/.test(value) || typeof value=="undefined" ) return Math.floor(value); else throw {status: 400, message:`El dato id_estado incumple los parametros acordados`};},{ toClassOnly: true})
     id_estado: number; 
 

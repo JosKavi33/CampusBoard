@@ -262,7 +262,7 @@ documento.tipo_documento AS tipo_documento_usuario,
 genero.tipo_genero AS genero_usuario
 FROM usuario 
 INNER JOIN documento  ON tipo_documento_usuario = documento.id_documento
-INNER JOIN genero  ON genero_usuario = genero.id_genero;
+INNER JOIN genero  ON genero_usuario = genero.id_genero WHERE id_usuario = 2;
 SELECT * FROM telefono;
 SELECT id_telefono, numero_telefono,
 usuario.nombre_completo_usuario AS usuario_telefono

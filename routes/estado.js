@@ -6,9 +6,9 @@ const storageEstado = Router();
 let con = undefined;
 
 storageEstado.use("/:id?", async (req, res, next) => {
-    try {
+    try {  
         const encoder = new TextEncoder();
-        const jwtconstructor = new SignJWT(req.params);
+        const jwtconstructor = new SignJWT(req.body && req.params);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
             .setIssuedAt()
@@ -16,7 +16,7 @@ storageEstado.use("/:id?", async (req, res, next) => {
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
         
         res.cookie('token', jwt, {httpOnly: true});
-        next();
+        next();  
     } catch (err) {
         console.error('Error al generar el JWT:', err.message);
         res.sendStatus(500);
@@ -48,14 +48,14 @@ storageEstado.get("/:id?", proxyEstado, async (req, res) => {
     );
 })
 
-storageEstado.post("/", proxyEstado, (req, res) => {
-    con.query(
+storageEstado.post("/", proxyEstado ,async (req, res) => {
+    con.query( 
         /*sql*/
         `INSERT INTO estado SET ?`,
-        req.body,
+        await getBody(req), 
         (err, result) => {
             if (err) {
-                console.error('Error al crear area:', err.message);
+                console.error('Error al crear estado:', err.message);
                 res.sendStatus(500);
             } else {
                 res.sendStatus(201);
@@ -93,8 +93,21 @@ storageEstado.delete("/:id", (req, res) => {
                 res.sendStatus(200);
             }
         }
-    );
+    ); 
 });
+const getBody = async (req) =>{
+    const jwt = req.cookies.token; 
+
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify( 
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    );
+
+    delete jwtData.payload.iat;
+    delete jwtData.payload.exp;
+    return jwtData.payload 
+}
 
 
 export default storageEstado;
