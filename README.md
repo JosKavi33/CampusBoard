@@ -48,6 +48,16 @@ dotenv
 nodemon
 typescript
 
+## Validacion De Token 
+
+Con esta linea verificamos que el token en la url coincida con el que generamos, esto debido a la persistencia de cookies de la url
+
+```
+if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
+        return res.sendStatus(403);
+    }
+```
+
 ## express-session
 
 Express-session es un middleware de Express que proporciona un sistema de gestión de sesiones para las aplicaciones web. Las sesiones son un mecanismo que permite a los servidores web mantener información sobre el estado de un usuario entre diferentes solicitudes del cliente.

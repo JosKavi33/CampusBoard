@@ -34,7 +34,6 @@ storageDocumento.use("/:id?", async (req, res, next) => {
 });
 
 storageDocumento.use((req, res, next) => {
-
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
@@ -47,7 +46,6 @@ storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
         return res.sendStatus(403);
     }
