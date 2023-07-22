@@ -256,7 +256,7 @@ INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 (9, 9),
 (10, 10);
 
-SELECT * FROM estado;
+SELECT * FROM rol_usuario;
 SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
 documento.tipo_documento AS tipo_documento_usuario,
 genero.tipo_genero AS genero_usuario
@@ -292,7 +292,7 @@ FROM proyecto_usuario pu
 INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
 INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 
-SELECT * FROM tarea_usuario;
+SELECT * FROM grupo_usuario;
 SELECT 
     pu.id_tarea_usuario,
     p.tarea_asignada AS nombre_tarea,

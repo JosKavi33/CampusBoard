@@ -7,7 +7,7 @@ const storageDocumento = Router();
 let con = undefined;
 
 storageDocumento.use(session({
-    secret: 'mi-secreto1',
+    secret: 'mi-secreto',
     resave: false, 
     saveUninitialized: true,   
 }));
@@ -116,7 +116,7 @@ const getBody = async (req) =>{
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
 
-    delete jwtData.payload.iat; 
+    delete jwtData.payload.iat;
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
 }
