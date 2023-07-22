@@ -74,8 +74,6 @@ storageDocumento.post("/", proxyDocumento ,async (req, res) => {
         }
     );
 });
-
-
 storageDocumento.put("/:id", proxyDocumento ,(req, res) => {
     con.query(
         /*sql*/
@@ -113,7 +111,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat;
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
