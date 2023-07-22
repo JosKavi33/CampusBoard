@@ -41,8 +41,7 @@ storageEmail.get("/:id?", proxyEmail , async (req,res)=>{
     )
 
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        // Si el ID del JWT no coincide con el ID proporcionado en la ruta
-        return res.sendStatus(403); // Prohibido - No tienes autorización para ver este recurso.
+        return res.sendStatus(403);
     }
 
     let sql = (jwtData.payload.id)
