@@ -256,7 +256,7 @@ INSERT INTO rol_usuario (id_rol, id_usuario) VALUES
 (9, 9),
 (10, 10);
 
-SELECT * FROM usuario;
+SELECT * FROM documento;
 SELECT id_usuario, nombre_completo_usuario, numero_documento_usuario, direccion_usuario, edad_usuario, 
 documento.tipo_documento AS tipo_documento_usuario,
 genero.tipo_genero AS genero_usuario

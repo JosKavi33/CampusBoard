@@ -6,7 +6,7 @@ import { validate } from "class-validator";
 import { jwtVerify } from "jose";
 
 const proxyDocumento = express();
-proxyDocumento.use(async(req,res,next)=>{
+proxyDocumento.use(async(req,res,next)=>{ 
     try {
         const jwt = req.cookies.token;
 
@@ -16,8 +16,8 @@ proxyDocumento.use(async(req,res,next)=>{
             encoder.encode(process.env.JWT_PRIVATE_KEY)
         )
         let data = plainToClass(documentoDTO, jwtData.payload, { excludeExtraneousValues: true});
-        await validate(data); 
-        next();
+        await validate(data);  
+        next();  
     } catch (err) {
         const statusCode = err.status || 500;
         const errorMessage = err.message || 'Ha ocurrido un error en el servidor.';
