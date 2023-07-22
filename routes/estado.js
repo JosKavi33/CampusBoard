@@ -1,9 +1,17 @@
+import session from 'express-session';
 import mysql from 'mysql2';
 import { Router } from 'express';
 import { SignJWT, jwtVerify } from 'jose';
 import proxyEstado from '../middleware/estadomiddleware.js';
+
 const storageEstado = Router();
 let con = undefined;
+
+storageEstado.use(session({
+    secret: 'mi-secreto1',
+    resave: false,
+    saveUninitialized: true,   
+}));
 
 storageEstado.use("/:id?", async (req, res, next) => {
     try {  
@@ -16,7 +24,8 @@ storageEstado.use("/:id?", async (req, res, next) => {
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
         req.body = payload.body;
-        const maxAgeInSeconds = 3600; // 1 hora
+        req.session.jwt = jwt;
+        const maxAgeInSeconds = 3600;
         res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
         next();  
     } catch (err) { 
@@ -33,8 +42,7 @@ storageEstado.use((req, res, next) => {
 })
 
 storageEstado.get("/:id?", proxyEstado, async (req, res) => {
-    const jwt = req.cookies.token;
-
+    const jwt = req.session.jwt;
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify( 
         jwt,
@@ -103,8 +111,7 @@ storageEstado.delete("/:id", (req, res) => {
     ); 
 });
 const getBody = async (req) =>{
-    const jwt = req.cookies.token; 
-
+    const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify( 
         jwt,

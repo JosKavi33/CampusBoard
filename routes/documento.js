@@ -1,9 +1,16 @@
-import mysql from 'mysql2';
+import session from 'express-session';
+import mysql from 'mysql2'; 
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose';
 import proxyDocumento from '../middleware/documentomiddleware.js';
 const storageDocumento = Router(); 
 let con = undefined;
+
+storageDocumento.use(session({
+    secret: 'mi-secreto1',
+    resave: false, 
+    saveUninitialized: true,   
+}));
 
 storageDocumento.use("/:id?", async (req, res, next) => {
     try {  
@@ -16,7 +23,8 @@ storageDocumento.use("/:id?", async (req, res, next) => {
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
         req.body = payload.body;
-        const maxAgeInSeconds = 3600; // 1 hora
+        req.session.jwt = jwt;
+        const maxAgeInSeconds = 3600;
         res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
         next();  
     } catch (err) { 
@@ -33,8 +41,7 @@ storageDocumento.use((req, res, next) => {
 }) 
 
 storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
-    const jwt = req.cookies.token; 
-
+    const jwt = req.session.jwt;
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify(
         jwt,
@@ -102,17 +109,15 @@ storageDocumento.delete("/:id",(req, res) => {
     );
 });
 const getBody = async (req) =>{
-    const jwt = req.cookies.token; 
-
+    const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify( 
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
 
-    delete jwtData.payload.iat;
-    delete jwtData.payload.exp;
+    delete jwtData.payload.iat; 
+    delete jwtData.payload.exp;   
     return jwtData.payload.body 
-}  
-
+}
 export default storageDocumento;

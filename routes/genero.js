@@ -1,9 +1,17 @@
+import session from 'express-session';
 import mysql from 'mysql2';
-import {Router} from 'express';
+import { Router } from 'express';
 import { SignJWT, jwtVerify } from 'jose';
 import proxyGenero from '../middleware/generomiddleware.js';
+
 const storageGenero = Router();
 let con = undefined;
+
+storageGenero.use(session({
+    secret: 'mi-secreto',
+    resave: false,
+    saveUninitialized: true,   
+}));
 
 storageGenero.use("/:id?", async (req, res, next) => {
     try {  
@@ -16,7 +24,8 @@ storageGenero.use("/:id?", async (req, res, next) => {
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
         req.body = payload.body;
-        const maxAgeInSeconds = 3600; // 1 hora
+        req.session.jwt = jwt;
+        const maxAgeInSeconds = 3600;
         res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
         next();  
     } catch (err) { 
@@ -26,15 +35,13 @@ storageGenero.use("/:id?", async (req, res, next) => {
 });
 
 storageGenero.use((req, res, next) => {
-
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
 
 storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
-    const jwt = req.cookies.token; 
-
+    const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify(
         jwt,
@@ -55,11 +62,11 @@ storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
     );
 })
 
-storageGenero.post("/", proxyGenero ,(req, res) => {
+storageGenero.post("/", proxyGenero , async(req, res) => {
     con.query(
         /*sql*/
         `INSERT INTO genero SET ?`,
-        req.body,
+        await getBody(req),
         (err, result) => {
             if (err) {
                 console.error('Error al crear genero:', err.message);
@@ -69,7 +76,7 @@ storageGenero.post("/", proxyGenero ,(req, res) => {
             }
         }
     );
-});
+}); 
 
 
 storageGenero.put("/:id", proxyGenero ,(req, res) => {
@@ -103,8 +110,7 @@ storageGenero.delete("/:id",(req, res) => {
     );
 });
 const getBody = async (req) =>{
-    const jwt = req.cookies.token; 
-
+    const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
     const jwtData = await jwtVerify( 
         jwt,
@@ -115,5 +121,4 @@ const getBody = async (req) =>{
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
 }
-
-export default storageGenero;
+export default storageGenero; 
