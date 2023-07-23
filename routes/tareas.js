@@ -1,4 +1,5 @@
 import session from 'express-session';
+import expressQueryBoolean from 'express-query-boolean';
 import mysql from 'mysql2';
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose'; 
@@ -36,32 +37,89 @@ storageTarea.use((req, res, next) => {
     con = mysql.createPool(myConfig)
     next();
 })
-storageTarea.get("/:id?/:id_estado?", proxyTarea, async (req, res) => {
-    const jwt = req.session.jwt;
-    const encoder = new TextEncoder();
-    const jwtData = await jwtVerify(
-        jwt,
-        encoder.encode(process.env.JWT_PRIVATE_KEY)
-    );
-    let sql;
-    if (req.params.id_estado) {
-        sql = [`SELECT t.*
-                FROM tareas t
-                INNER JOIN estado e ON t.estado_tarea = e.id_estado
-                WHERE e.tipo_estado = ?`, req.params.id_estado];
-    } else if (req.params.id) { 
-        sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, req.params.id];
-    } else {
-        sql = [`SELECT * FROM tareas`];
-    }
+storageTarea.use(expressQueryBoolean());
+// Función para obtener tareas por ID
+const getTareaById = (id) => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
     con.query(...sql, (err, data) => {
         if (err) {
+        reject(err);
+        } else {
+        resolve(data);
+        }
+    });
+    });
+};
+
+// Función para obtener tareas por estado
+const getTareaByEstado = (estado) => {
+    return new Promise((resolve, reject) => {
+    const sql = [
+        `SELECT t.*
+        FROM tareas t
+        INNER JOIN estado e ON t.estado_tarea = e.id_estado
+        WHERE e.tipo_estado = ?`,
+        estado
+    ];
+    con.query(...sql, (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+    });
+};
+
+// Función para obtener tareas por grupo
+const getTareaByGrupo = (grupo) => {
+    return new Promise((resolve, reject) => {
+    const sql = [
+        `SELECT t.*
+        FROM tareas t
+        INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+        INNER JOIN grupo_usuario gu ON tu.id_usuario = gu.id_usuario
+        INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+        WHERE g.nombre_grupo = ?`,
+        grupo
+    ];
+    con.query(...sql, (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+    });
+};
+// Handler para la ruta de tareas
+storageTarea.get("/", proxyTarea, async (req, res) => {
+    try {
+    if (req.query.id) {
+        const data = await getTareaById(req.query.id);
+        res.send(data);
+    } else if (req.query.estado) {
+        const data = await getTareaByEstado(req.query.estado);
+        res.send(data);
+    } else if (req.query.grupo) {
+        const data = await getTareaByGrupo(req.query.grupo);
+        res.send(data);
+    } else {
+        const sql = [`SELECT * FROM tareas`];
+        con.query(...sql, (err, data) => {
+        if (err) {
             console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
-            res.status(err.status);
+            res.status(err.status || 500);
         } else {
             res.send(data);
         }
-    });
+        });
+    }
+    } catch (err) {
+    console.error("Ocurrió un error al procesar la solicitud", err.message);
+    res.sendStatus(500);
+    }
 });
 storageTarea.post("/", proxyTarea ,async (req, res) => {
     con.query(

@@ -58,7 +58,7 @@ if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
     }
 ```
 
-## express-session
+# express-session
 
 Express-session es un middleware de Express que proporciona un sistema de gestión de sesiones para las aplicaciones web. Las sesiones son un mecanismo que permite a los servidores web mantener información sobre el estado de un usuario entre diferentes solicitudes del cliente.
 
@@ -66,7 +66,7 @@ Cuando un cliente (navegador) se conecta a una aplicación web, el servidor web 
 
 Con esto eliminamos la persistencia que tenia la cookiees, que nos hacia tener que dar a buscar dos veces
 
-#Instalacion
+# Instalacion
 
 ```
 npm i -E -D express-session
@@ -80,6 +80,72 @@ storageGenero.use(session({
     resave: false,
     saveUninitialized: true,   
 }));
+```
+
+# express-query-boolean
+
+Es una libreri que nos permite parsear los parámetros de consulta y luego definir cada tipo de consulta en una función separada.
+Con este enfoque, cada tipo de consulta se maneja de manera separada en su propia función, lo que hace que el código sea más fácil de mantener y extender. Además, el uso de async/await y Promise permite manejar los errores de manera más efectiva
+
+### instalacion
+
+```
+npm i -E -D express-query-boolean
+```
+
+## Definimos
+
+Agregamos el middleware expressQueryBoolean para parsear los parámetros booleanos
+
+```
+storageTarea.use(expressQueryBoolean());
+```
+
+Función para obtener tareas por ID
+
+```
+const getTareaById = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
+    con.query(...sql, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
+```
+Handler para la ruta de tareas
+```
+storageTarea.get("/", proxyTarea, async (req, res) => {
+  try {
+    if (req.query.id) {
+      const data = await getTareaById(req.query.id);
+      res.send(data);
+    } else if (req.query.estado) {
+      const data = await getTareaByEstado(req.query.estado);
+      res.send(data);
+    } else if (req.query.grupo) {
+      const data = await getTareaByGrupo(req.query.grupo);
+      res.send(data);
+    } else {
+      const sql = [`SELECT * FROM tareas`];
+      con.query(...sql, (err, data) => {
+        if (err) {
+          console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
+          res.status(err.status || 500);
+        } else {
+          res.send(data);
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Ocurrió un error al procesar la solicitud", err.message);
+    res.sendStatus(500);
+  }
+});
 ```
 
 # Almacenar el JWT en la variable de sesión
@@ -118,4 +184,45 @@ const getBody = async (req) =>{
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
 }
+```
+
+# CONSULTAS
+
+## Buscar tareas por id
+
+```
+http://127.9.63.30:5042/tareas?id=1
+```
+
+## Buscar tareas por estado pendientes
+```
+http://127.9.63.30:5042/tareas?estado=Pendiente
+
+    "tipo_estado": "Pendiente
+    "tipo_estado": "En progreso"
+    "tipo_estado": "Completado"
+    "tipo_estado": "Cancelado"
+    "tipo_estado": "Revisión"
+    "tipo_estado": "Aprobado"
+    "tipo_estado": "Rechazado"
+    "tipo_estado": "Entregado"
+    "tipo_estado": "Suspendido"
+    "tipo_estado": "Finalizado"
+```
+
+## Buscar tareas por gruupo
+
+```
+http://127.9.63.30:5042/tareas?grupo=Grupo%20C //el %20 es por el espacio, si el nombre del grupo no tuviese espacio seria sin este
+
+    "Grupo%20A",
+    "Grupo%20B",
+    "Grupo%20C",
+    "Grupo%20D",
+    "Grupo%20E",
+    "Grupo%20F",
+    "Grupo%20G",
+    "Grupo%20H",
+    "Grupo%20I",
+    "Grupo%20J"
 ```

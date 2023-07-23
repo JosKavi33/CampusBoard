@@ -327,7 +327,7 @@ INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 SELECT t.*
 FROM tareas t
 INNER JOIN estado e ON t.estado_tarea = e.id_estado
-WHERE e.tipo_estado = ?;
+WHERE e.tipo_estado = 'Pendiente';
 /*  
 ?proyecto por estado
 */
@@ -426,7 +426,7 @@ INNER JOIN grupo_usuario gu ON tu.id_usuario = gu.id_usuario
 INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
 WHERE g.nombre_grupo = 'Grupo A';
 /*  
-?usuarios por gereno en los grupos
+?usuarios por genero en los grupos
 */
 SELECT u.*, g1.tipo_genero
 FROM usuario u
@@ -527,4 +527,5 @@ LEFT JOIN estado e ON p.estado_proyecto = e.id_estado;
 
 
 
+SELECT * FROM tareas;
 
