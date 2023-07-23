@@ -246,3 +246,8 @@ http://127.9.63.30:5042/tareas?numTareGrupo=Pendiente
 ```
 http://127.9.63.30:5042/proyecto?estado=Pendiente
 ```
+## Proyectos por grupo
+
+```
+http://127.9.63.30:5042/proyecto?grupo=Grupo%20C
+```
