@@ -40,7 +40,10 @@ storageTarea.use((req, res, next) => {
 storageTarea.use(expressQueryBoolean());
 const getTareaById = (id) => {
     return new Promise((resolve, reject) => {
-    const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
+    const sql = [`SELECT id_tarea, tarea_asignada, tiempo_inicio, tiempo_entrega,
+    estado.tipo_estado AS estado_tarea
+    FROM tareas 
+    INNER JOIN estado  ON estado_tarea = estado.id_estado WHERE id_tarea = ?`, id];
     con.query(...sql, (err, data) => {
         if (err) {
         reject(err);
@@ -164,7 +167,7 @@ storageTarea.get("/", proxyTarea, async (req, res) => {
         const data = await getTareaByEstado(req.query.estado);
         res.send(data);
     } else if (req.query.numTare) {
-        const data = await getNumTareaByEstado(req.query.numTare);
+        const data = await getNumTareaByEstado(req.query.numTare); 
         res.send(data); 
     } else if (req.query.numTareGrupo) {
         const data = await getNumTareaByEstadoGrupo(req.query.numTareGrupo);
@@ -173,7 +176,10 @@ storageTarea.get("/", proxyTarea, async (req, res) => {
         const data = await getTareaByGrupo(req.query.grupo);
         res.send(data);
     } else { 
-        const sql = [`SELECT * FROM tareas`];
+        const sql = [`SELECT id_tarea, tarea_asignada, tiempo_inicio, tiempo_entrega,
+        estado.tipo_estado AS estado_tarea
+        FROM tareas 
+        INNER JOIN estado  ON estado_tarea = estado.id_estado`]; 
         con.query(...sql, (err, data) => {
         if (err) {
             console.error("Ocurrió un error intentando traer los datos de tareas", err.message);

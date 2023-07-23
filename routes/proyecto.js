@@ -1,4 +1,5 @@
 import session from 'express-session';
+import expressQueryBoolean from 'express-query-boolean';
 import mysql from 'mysql2';
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose';
@@ -11,7 +12,6 @@ storageProyecto.use(session({
     resave: false, 
     saveUninitialized: true,   
 }));
-
 storageProyecto.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
@@ -32,38 +32,74 @@ storageProyecto.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageProyecto.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
+storageProyecto.use(expressQueryBoolean());
+const getProyectoById = (id) => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
+    estado.tipo_estado AS estado_proyecto
+    FROM proyecto 
+    INNER JOIN estado  ON estado_proyecto = estado.id_estado WHERE id_proyecto = ?`, id];
+    con.query(...sql, (err, data) => {
+        if (err) {
+        reject(err);
+        } else {
+        resolve(data);
+        }
+    });
+    });
+};
+const getProyectoByEstado = (estado) => {
+    return new Promise((resolve, reject) => {
+    const sql = [
+        `SELECT p.*
+        FROM proyecto p
+        INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+        WHERE e.tipo_estado = ?`,
+        estado
+    ];
+    con.query(...sql, (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+    });
+};
 
 storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
-    const jwt = req.session.jwt; 
-    const encoder = new TextEncoder();  
-    const jwtData = await jwtVerify(
-        jwt,
-        encoder.encode(process.env.JWT_PRIVATE_KEY)
-    )
-    if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        return res.sendStatus(403);
-    }
-    let sql = (jwtData.payload.id)
-        ? [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
-        estado.tipo_estado AS estado_proyecto
-        FROM proyecto 
-        INNER JOIN estado  ON estado_proyecto = estado.id_estado WHERE id_proyecto = ?`, jwtData.payload.id] 
-        : [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
-        estado.tipo_estado AS estado_proyecto
-        FROM proyecto 
-        INNER JOIN estado  ON estado_proyecto = estado.id_estado;`];
-    con.query(...sql,
-        (err, data, fie)=>{
+    try {
+        if (req.query.id) {
+            const data = await getProyectoById(req.query.id);
             res.send(data);
+        } else if (req.query.estado) {
+            const data = await getProyectoByEstado(req.query.estado);
+            res.send(data);
+        } else { 
+            const sql = [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
+            estado.tipo_estado AS estado_proyecto
+            FROM proyecto 
+            INNER JOIN estado  ON estado_proyecto = estado.id_estado`];
+            con.query(...sql, (err, data) => {
+            if (err) {
+                console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
+                res.status(err.status || 500);
+            } else {
+                res.send(data);
+            }
+            }); 
         }
-    );
-})
+        } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+        }
+    });
+    
 storageProyecto.post("/", proxyProyecto ,async (req, res) => {
     con.query(
         /*sql*/

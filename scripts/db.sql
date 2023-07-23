@@ -324,10 +324,10 @@ INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 /*  
 ?tareas por estado
 */
-SELECT t.*
+/* SELECT t.*
 FROM tareas t
 INNER JOIN estado e ON t.estado_tarea = e.id_estado
-WHERE e.tipo_estado = 'Pendiente';
+WHERE e.tipo_estado = 'Pendiente'; */
 /*  
 ?proyecto por estado
 */
