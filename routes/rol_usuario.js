@@ -82,12 +82,15 @@ storageRolUsuario.post("/", proxyRolUsuario ,async (req, res) => {
         }
     );
 });
-storageRolUsuario.put("/:id", proxyRolUsuario ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE rol_usuario SET ?  WHERE id_rol_usuario = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageRolUsuario.put("/:id", proxyRolUsuario ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE rol_usuario SET ? WHERE id_rol_usuario = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar rol_usuario:', err.message);
                 res.sendStatus(500);
@@ -97,20 +100,22 @@ storageRolUsuario.put("/:id", proxyRolUsuario ,(req, res) => {
         }
     );
 });
-storageRolUsuario.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM rol_usuario WHERE id_rol_usuario = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar rol_usuario:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageRolUsuario.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM rol_usuario WHERE id_rol_usuario = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando rol_usuario ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

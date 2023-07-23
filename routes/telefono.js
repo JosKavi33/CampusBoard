@@ -80,14 +80,15 @@ storageTelefono.post("/", proxyTelefono ,async (req, res) => {
         }
     );
 });
-
-
-storageTelefono.put("/:id", proxyTelefono ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE telefono SET ?  WHERE id_telefono = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageTelefono.put("/:id", proxyTelefono ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE telefono SET ? WHERE id_telefono = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar telefono:', err.message);
                 res.sendStatus(500);
@@ -97,20 +98,22 @@ storageTelefono.put("/:id", proxyTelefono ,(req, res) => {
         }
     );
 });
-storageTelefono.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM telefono WHERE id_telefono = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar telefono:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageTelefono.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM telefono WHERE id_telefono = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando telefono ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    }) 
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

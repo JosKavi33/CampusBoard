@@ -83,12 +83,15 @@ storageUsuario.post("/", proxyUsuario ,async (req, res) => {
         }
     );
 });
-storageUsuario.put("/:id", proxyUsuario ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE usuario SET ?  WHERE id_usuario = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageUsuario.put("/:id", proxyUsuario ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE usuario SET ? WHERE id_usuario = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar usuario:', err.message);
                 res.sendStatus(500);
@@ -98,20 +101,22 @@ storageUsuario.put("/:id", proxyUsuario ,(req, res) => {
         }
     );
 });
-storageUsuario.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM usuario WHERE id_usuario = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar usuario:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageUsuario.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM usuario WHERE id_usuario = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando usuario ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

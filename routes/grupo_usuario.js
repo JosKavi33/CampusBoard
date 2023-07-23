@@ -82,14 +82,17 @@ storageGrupoUsuario.post("/", proxyGrupoUsuario ,async (req, res) => {
         }
     );
 });
-storageGrupoUsuario.put("/:id", proxyGrupoUsuario ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE grupo_usuario SET ?  WHERE id_grupo_usuario = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageGrupoUsuario.put("/:id", proxyGrupoUsuario ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE grupo_usuario SET ? WHERE id_grupo_usuario = ?`, [jwtData.payload.body, jwtData.payload.params.id],
+        (err, result) => { 
             if (err) {
-                console.error('Error al actualizar proyecto_usuario:', err.message);
+                console.error('Error al actualizar grupo_usuario:', err.message);
                 res.sendStatus(500);
             } else {
                 res.sendStatus(200);
@@ -97,20 +100,22 @@ storageGrupoUsuario.put("/:id", proxyGrupoUsuario ,(req, res) => {
         }
     );
 });
-storageGrupoUsuario.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM grupo_usuario WHERE id_grupo_usuario = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar grupo_usuario:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageGrupoUsuario.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM grupo_usuario WHERE id_grupo_usuario = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando grupo_usuario ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

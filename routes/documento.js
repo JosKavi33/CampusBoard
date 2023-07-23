@@ -70,12 +70,15 @@ storageDocumento.post("/", proxyDocumento ,async (req, res) => {
         }
     );
 });
-storageDocumento.put("/:id", proxyDocumento ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE documento SET ?  WHERE id_documento = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageDocumento.put("/:id", proxyDocumento,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE documento SET ? WHERE id_documento = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar documento:', err.message);
                 res.sendStatus(500);
@@ -85,20 +88,22 @@ storageDocumento.put("/:id", proxyDocumento ,(req, res) => {
         }
     );
 });
-storageDocumento.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM documento WHERE id_documento = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar documento:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageDocumento.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM documento WHERE id_documento = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando documento ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

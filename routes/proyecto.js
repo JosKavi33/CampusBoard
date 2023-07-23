@@ -79,12 +79,15 @@ storageProyecto.post("/", proxyProyecto ,async (req, res) => {
         }
     );
 });
-storageProyecto.put("/:id", proxyProyecto ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE proyecto SET ?  WHERE id_proyecto = ?`,
-        [req.body, req.params.id],
-        (err, result) => {id_tarea
+storageProyecto.put("/:id", proxyProyecto ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE proyecto SET ? WHERE id_proyecto = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar proyecto:', err.message);
                 res.sendStatus(500);
@@ -94,20 +97,22 @@ storageProyecto.put("/:id", proxyProyecto ,(req, res) => {
         }
     );
 });
-storageProyecto.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM proyecto WHERE id_proyecto = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar tareas:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageProyecto.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM proyecto WHERE id_proyecto = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando proyecto ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 
@@ -116,7 +121,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat;
     delete jwtData.payload.exp;   
     return jwtData.payload.body 

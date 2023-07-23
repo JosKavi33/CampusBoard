@@ -12,7 +12,6 @@ storageGenero.use(session({
     resave: false,
     saveUninitialized: true,   
 }));
-
 storageGenero.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
@@ -33,13 +32,11 @@ storageGenero.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageGenero.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
-
 storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
     const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
@@ -47,11 +44,9 @@ storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
         return res.sendStatus(403);
     }
-
     let sql = (jwtData.payload.id)
         ? [`SELECT * FROM genero WHERE id_genero = ?`, jwtData.payload.id]
         : [`SELECT * FROM genero`];
@@ -61,7 +56,6 @@ storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
         }
     );
 })
-
 storageGenero.post("/", proxyGenero , async(req, res) => {
     con.query(
         /*sql*/
@@ -77,14 +71,15 @@ storageGenero.post("/", proxyGenero , async(req, res) => {
         }
     );
 }); 
-
-
-storageGenero.put("/:id", proxyGenero ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE genero SET ?  WHERE id_genero = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageGenero.put("/:id", proxyGenero ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE genero SET ? WHERE id_genero = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar genero:', err.message);
                 res.sendStatus(500);
@@ -94,20 +89,22 @@ storageGenero.put("/:id", proxyGenero ,(req, res) => {
         }
     );
 });
-storageGenero.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM genero WHERE id_genero = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar genero:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageGenero.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM genero WHERE id_genero = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando genero ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 
@@ -116,7 +113,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat; 
     delete jwtData.payload.exp;   
     return jwtData.payload.body 

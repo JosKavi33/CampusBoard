@@ -39,11 +39,9 @@ storageEmail.get("/:id?", proxyEmail , async (req,res)=>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
         return res.sendStatus(403);
     }
-
     let sql = (jwtData.payload.id)
         ? [`SELECT id_email, nombre_email,
         usuario.nombre_completo_usuario AS usuario_email
@@ -75,12 +73,15 @@ storageEmail.post("/", proxyEmail ,async (req, res) => {
         }
     );
 });
-storageEmail.put("/:id", proxyEmail ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE email SET ?  WHERE id_email = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageEmail.put("/:id", proxyEmail ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`UPDATE email SET ? WHERE id_email = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar email:', err.message);
                 res.sendStatus(500);
@@ -90,20 +91,22 @@ storageEmail.put("/:id", proxyEmail ,(req, res) => {
         }
     );
 });
-storageEmail.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM email WHERE id_email = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar email:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageEmail.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM email WHERE id_email = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando email ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.cookies.token; 

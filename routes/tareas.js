@@ -11,7 +11,6 @@ storageTarea.use(session({
     resave: false, 
     saveUninitialized: true,   
 }));
-
 storageTarea.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
@@ -62,7 +61,6 @@ storageTarea.get("/:id?", proxyTarea , async (req,res)=>{
         }
     );
 })
-
 storageTarea.post("/", proxyTarea ,async (req, res) => {
     con.query(
         /*sql*/
@@ -78,14 +76,15 @@ storageTarea.post("/", proxyTarea ,async (req, res) => {
         }
     );
 });
-
-
-storageTarea.put("/:id", proxyTarea ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE tareas SET ?  WHERE id_tarea = ?`,
-        [req.body, req.params.id],
-        (err, result) => {id_tarea
+storageTarea.put("/:id", proxyTarea ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE tareas SET ? WHERE id_tareas = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar tareas:', err.message);
                 res.sendStatus(500);
@@ -95,20 +94,22 @@ storageTarea.put("/:id", proxyTarea ,(req, res) => {
         }
     );
 });
-storageTarea.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM tareas WHERE id_tarea = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar tareas:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageTarea.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM tareas WHERE id_tareas = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando tareas ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

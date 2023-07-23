@@ -74,14 +74,15 @@ storageGrupo.post("/", proxyGrupo , async(req, res) => {
         }
     );
 });
-
-
-storageGrupo.put("/:id", proxyGrupo ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE grupo SET ?  WHERE id_grupo = ?`,
-        [req.body, req.params.id],
-        (err, result) => {id_tarea
+storageGrupo.put("/:id", proxyGrupo ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE grupo SET ? WHERE id_grupo = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar grupo:', err.message);
                 res.sendStatus(500);
@@ -91,20 +92,22 @@ storageGrupo.put("/:id", proxyGrupo ,(req, res) => {
         }
     );
 });
-storageGrupo.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM grupo WHERE id_grupo = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar grupo:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageGrupo.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM grupo WHERE id_grupo = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando grupo ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 
@@ -113,7 +116,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat;
     delete jwtData.payload.exp;   
     return jwtData.payload.body 

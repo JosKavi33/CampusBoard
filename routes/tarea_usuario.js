@@ -85,12 +85,15 @@ storageTareaUsuario.post("/", proxyTareaUsuario ,async (req, res) => {
 });
 
 
-storageTareaUsuario.put("/:id", proxyTareaUsuario ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE tarea_usuario SET ?  WHERE id_tarea_usuario = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageTareaUsuario.put("/:id", proxyTareaUsuario ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE tarea_usuario SET ? WHERE id_tarea_usuario = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar tarea_usuario:', err.message);
                 res.sendStatus(500);
@@ -100,20 +103,22 @@ storageTareaUsuario.put("/:id", proxyTareaUsuario ,(req, res) => {
         }
     );
 });
-storageTareaUsuario.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM tarea_usuario WHERE id_tarea_usuario = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar tarea_usuario:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageTareaUsuario.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM tarea_usuario WHERE id_tarea_usuario = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando tarea_usuario ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

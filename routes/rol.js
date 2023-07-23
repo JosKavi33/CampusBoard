@@ -75,12 +75,15 @@ storageRol.post("/", proxyRol ,async (req, res) => {
     );
 });
 
-storageRol.put("/:id", proxyRol ,(req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE rol SET ?  WHERE id_rol = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageRol.put("/:id", proxyRol ,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE rol SET ? WHERE id_rol = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar rol:', err.message);
                 res.sendStatus(500);
@@ -90,20 +93,22 @@ storageRol.put("/:id", proxyRol ,(req, res) => {
         }
     );
 });
-storageRol.delete("/:id",(req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM rol WHERE id_rol = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar rol:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageRol.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM rol WHERE id_rol = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando rol ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    );
+    })
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 

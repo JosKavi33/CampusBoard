@@ -33,14 +33,12 @@ storageEstado.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageEstado.use((req, res, next) => {
 
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next(); 
 })
-
 storageEstado.get("/:id?", proxyEstado, async (req, res) => {
     const jwt = req.session.jwt;
     const encoder = new TextEncoder();  
@@ -48,11 +46,9 @@ storageEstado.get("/:id?", proxyEstado, async (req, res) => {
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
         return res.sendStatus(403);
     }
-    
     let sql = (jwtData.payload.id) 
         ? [`SELECT * FROM estado WHERE id_estado = ?`, jwtData.payload.id]  
         : [`SELECT * FROM estado`];   
@@ -62,7 +58,6 @@ storageEstado.get("/:id?", proxyEstado, async (req, res) => {
         }
     );
 })
-
 storageEstado.post("/", proxyEstado ,async (req, res) => {
     con.query( 
         /*sql*/
@@ -78,14 +73,15 @@ storageEstado.post("/", proxyEstado ,async (req, res) => {
         }
     );
 });
-
-
-storageEstado.put("/:id", proxyEstado, (req, res) => {
-    con.query(
-        /*sql*/
-        `UPDATE estado SET ?  WHERE id_estado = ?`,
-        [req.body, req.params.id],
-        (err, result) => {
+storageEstado.put("/:id", proxyEstado,async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    ) 
+    con.query(`UPDATE estado SET ? WHERE id_estado = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+        (err, result) => { 
             if (err) {
                 console.error('Error al actualizar estado:', err.message);
                 res.sendStatus(500);
@@ -95,20 +91,22 @@ storageEstado.put("/:id", proxyEstado, (req, res) => {
         }
     );
 });
-storageEstado.delete("/:id", (req, res) => {
-    con.query(
-        /*sql*/
-        `DELETE FROM estado WHERE id_estado = ?`,
-        [req.params.id],
-        (err, result) => {
-            if (err) {
-                console.error('Error al eliminar estado:', err.message);
-                res.sendStatus(500);
-            } else {
-                res.sendStatus(200);
-            }
+storageEstado.delete("/:id",async (req, res) => {
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify(
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    )
+    con.query(`DELETE FROM estado WHERE id_estado = ?`, jwtData.payload.params.id, 
+        (err,info)=>{
+        if(err) {
+            console.error(`error eliminando estado ${req.params.id}: `, err.message);
+            res.status(err.status)
+        } else {
+            res.send(info);
         }
-    ); 
+    }) 
 });
 const getBody = async (req) =>{
     const jwt = req.session.jwt; 
@@ -117,7 +115,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat; 
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
