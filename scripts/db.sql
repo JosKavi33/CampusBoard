@@ -17,6 +17,7 @@ CREATE TABLE rol (
     id_rol INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_rol VARCHAR(20) NOT NULL
 );
+SELECT * FROM tareas;
 CREATE TABLE grupo (
     id_grupo INT PRIMARY KEY NOT NULL,
     nombre_grupo VARCHAR(40) NOT NULL
@@ -32,7 +33,7 @@ CREATE TABLE usuario (
     FOREIGN KEY (genero_usuario) REFERENCES genero(id_genero),
     FOREIGN KEY (tipo_documento_usuario) REFERENCES documento(id_documento)
 );
-SELECT *FROM documento;
+SELECT *FROM usuario;
 CREATE TABLE telefono (
     id_telefono INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     numero_telefono VARCHAR(15) NOT NULL,
@@ -316,5 +317,216 @@ SELECT
 FROM rol_usuario pu
 INNER JOIN rol p ON pu.id_rol = p.id_rol
 INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
+
+/*  
+?CONSULTAS
+*/
+SELECT * FROM estado;
+SELECT * FROM tareas;
+/*  
+?tareas por estado
+*/
+SELECT t.*
+FROM tareas t
+INNER JOIN estado e ON t.estado_tarea = e.id_estado
+WHERE e.tipo_estado = ?;
+/*  
+?proyecto por estado
+*/
+SELECT p.*
+FROM proyecto p
+INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+WHERE e.tipo_estado = ?;
+/*  
+?usuarios por tipo de documento 
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN documento d ON u.tipo_documento_usuario = d.id_documento
+WHERE d.tipo_documento = ?;
+/*  
+?usuarios por genero
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN genero g ON u.tipo_documento_usuario = g.id_genero
+WHERE g.tipo_genero = ?;
+/* 
+?usuarios por rol
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN rol r ON u.tipo_documento_usuario = r.id_rol
+WHERE r.nombre_rol = ?;
+/*  
+?telefonos por usuario
+*/
+SELECT t.*, u.nombre_completo_usuario AS nombre_usuario
+FROM telefono t
+INNER JOIN usuario u ON t.usuario_telefono = u.id_usuario
+WHERE u.nombre_completo_usuario = 'Juan Pérez';
+/*  
+?email por usuario
+*/
+SELECT e.*, u.nombre_completo_usuario AS nombre_usuario
+FROM email e
+INNER JOIN usuario u ON e.usuario_email = u.id_usuario
+WHERE u.nombre_completo_usuario = 'Juan Pérez';
+/*  
+?usuarios por grupo
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE g.nombre_grupo = 'Grupo A';
+/*  
+?roles por grupo
+*/
+SELECT r.*
+FROM rol r
+INNER JOIN rol_usuario ru ON r.id_rol = ru.id_rol
+INNER JOIN grupo_usuario gu ON ru.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE g.nombre_grupo = 'Grupo A';
+/*  
+?Proyectos por grupo
+*/
+SELECT p.*
+FROM proyecto p
+INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
+INNER JOIN grupo_usuario gu ON pu.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE g.nombre_grupo = 'Grupo C';
+/*  
+?tareas por grupo
+*/
+SELECT t.*
+FROM tareas t
+INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+INNER JOIN grupo_usuario gu ON tu.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE g.nombre_grupo = 'Grupo C';
+/*  
+?estado de proyecto por grupo
+*/
+SELECT p.*, e.tipo_estado
+FROM proyecto p
+INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
+INNER JOIN grupo_usuario gu ON pu.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+WHERE g.nombre_grupo = 'Grupo A';
+/*  
+?estado de tarea por grupo
+*/
+SELECT t.*, e.tipo_estado
+FROM tareas t
+INNER JOIN estado e ON t.estado_tarea = e.id_estado
+INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+INNER JOIN grupo_usuario gu ON tu.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE g.nombre_grupo = 'Grupo A';
+/*  
+?usuarios por gereno en los grupos
+*/
+SELECT u.*, g1.tipo_genero
+FROM usuario u
+INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
+INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
+WHERE g1.tipo_genero = 'Masculino' AND g2.nombre_grupo = 'Grupo A';
+/*  
+?usuarios por genero en los proyectos
+*/
+SELECT u.*, g.tipo_genero
+FROM usuario u
+INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+INNER JOIN genero g ON u.genero_usuario = g.id_genero
+INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+WHERE g.tipo_genero = 'Masculino' AND p.nombre_proyecto = 'Proyecto A';
+
+/*  
+?genero por tipo de documento
+*/
+SELECT g.tipo_genero, d.tipo_documento
+FROM genero g
+INNER JOIN usuario u ON g.id_genero = u.genero_usuario
+INNER JOIN documento d ON u.tipo_documento_usuario = d.id_documento;
+/*  
+?numero de proyectos por estado
+*/
+SELECT e.tipo_estado, COUNT(*) AS numero_proyectos
+FROM proyecto p
+INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+GROUP BY e.tipo_estado;
+/*  
+?proyecto por usuario
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+WHERE p.nombre_proyecto = 'Proyecto A';
+/*  
+?tarea por usuario
+*/
+SELECT u.*
+FROM usuario u
+INNER JOIN tarea_usuario tu ON u.id_usuario = tu.id_usuario
+INNER JOIN tareas t ON tu.id_tarea = t.id_tarea
+WHERE t.tarea_asignada = 'Realizar informe';
+/*  
+?numero de tareas por estado
+*/
+SELECT g.nombre_grupo, e.tipo_estado, COUNT(*) AS numero_tareas
+FROM tareas t
+INNER JOIN estado e ON t.estado_tarea = e.id_estado
+INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+INNER JOIN usuario u ON tu.id_usuario = u.id_usuario
+INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+GROUP BY g.nombre_grupo, e.tipo_estado;
+/*  
+?numero de tareas por estado especifico en los grupos
+*/
+SELECT g.nombre_grupo, t.tarea_asignada
+FROM tareas t
+INNER JOIN estado e ON t.estado_tarea = e.id_estado
+INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+INNER JOIN usuario u ON tu.id_usuario = u.id_usuario
+INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE e.tipo_estado = 'Pendiente'
+GROUP BY g.nombre_grupo, t.tarea_asignada;
+/*  
+?numero de proyectos por estado especifico
+*/
+SELECT g.nombre_grupo, p.nombre_proyecto
+FROM proyecto p
+INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
+INNER JOIN usuario u ON pu.id_usuario = u.id_usuario
+INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+WHERE e.tipo_estado = 'pendiente'
+GROUP BY g.nombre_grupo, p.nombre_proyecto;
+/*  
+?Consulta Todo 
+*/
+SELECT g.nombre_grupo, u.nombre_completo_usuario, r.nombre_rol, p.nombre_proyecto, e.tipo_estado
+FROM grupo g
+LEFT JOIN grupo_usuario gu ON g.id_grupo = gu.id_grupo
+LEFT JOIN usuario u ON gu.id_usuario = u.id_usuario
+LEFT JOIN rol_usuario ru ON u.id_usuario = ru.id_usuario
+LEFT JOIN rol r ON ru.id_rol = r.id_rol
+LEFT JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+LEFT JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+LEFT JOIN estado e ON p.estado_proyecto = e.id_estado;
+
+
+
+
+
 
 
