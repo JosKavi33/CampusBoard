@@ -298,3 +298,15 @@ http://127.9.63.30:5042/usuario?grupo=Grupo%20A
 ```
 http://127.9.63.30:5042/usuario?genero=Masculino&grupo=Grupo%20A
 ```
+
+## Buscar Genero por id
+
+```
+http://127.9.63.30:5042/genero?id=2
+```
+
+## Buscar Generos por documento
+
+```
+http://127.9.63.30:5042/genero/genero-y-documento
+```

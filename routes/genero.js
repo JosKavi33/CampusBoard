@@ -1,4 +1,5 @@
 import session from 'express-session';
+import expressQueryBoolean from 'express-query-boolean';
 import mysql from 'mysql2';
 import { Router } from 'express';
 import { SignJWT, jwtVerify } from 'jose';
@@ -37,25 +38,58 @@ storageGenero.use((req, res, next) => {
     con = mysql.createPool(myConfig)
     next();
 })
-storageGenero.get("/:id?", proxyGenero , async (req,res)=>{
-    const jwt = req.session.jwt; 
-    const encoder = new TextEncoder();  
-    const jwtData = await jwtVerify(
-        jwt,
-        encoder.encode(process.env.JWT_PRIVATE_KEY)
-    )
-    if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        return res.sendStatus(403);
-    }
-    let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM genero WHERE id_genero = ?`, jwtData.payload.id]
-        : [`SELECT * FROM genero`];
-    con.query(...sql,
-        (err, data, fie)=>{
-            res.send(data);
+storageGenero.use(expressQueryBoolean()); 
+const getTareaById = (id) => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT * FROM genero WHERE id_genero = ?`, id];
+    con.query(...sql, (err, data) => {
+        if (err) {
+        reject(err);
+        } else {
+        resolve(data);
         }
-    );
-})
+    });
+    });
+};
+const getGeneroAndDocumento = () => {
+    return new Promise((resolve, reject) => {
+        const sql = [
+            `SELECT g.tipo_genero, d.tipo_documento
+            FROM genero g
+            INNER JOIN usuario u ON g.id_genero = u.genero_usuario
+            INNER JOIN documento d ON u.tipo_documento_usuario = d.id_documento`
+        ];
+        con.query(...sql, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
+
+storageGenero.get("/", proxyGenero , async (req,res)=>{
+    try { 
+        if (req.query.id) {
+            const data = await getTareaById(req.query.id);
+            res.send(data);
+        }else { 
+            const sql = [`SELECT * FROM genero`]; 
+            con.query(...sql, (err, data) => {
+            if (err) {
+                console.error("Ocurrió un error intentando traer los datos de genero", err.message);
+                res.status(err.status || 500);
+            } else {
+                res.send(data);
+            }
+            });
+        }
+        } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+        }
+    });
 storageGenero.post("/", proxyGenero , async(req, res) => {
     con.query(
         /*sql*/
@@ -71,6 +105,15 @@ storageGenero.post("/", proxyGenero , async(req, res) => {
         }
     );
 }); 
+storageGenero.get("/genero-y-documento", proxyGenero, async (req, res) => {
+    try {
+        const data = await getGeneroAndDocumento();
+        res.send(data);
+    } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
 storageGenero.put("/:id", proxyGenero ,async (req, res) => {
     const jwt = req.session.jwt; 
     const encoder = new TextEncoder();  
