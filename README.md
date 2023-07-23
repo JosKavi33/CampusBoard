@@ -188,17 +188,10 @@ const getBody = async (req) =>{
 
 # CONSULTAS
 
-## Buscar tareas por id
+## Estados
 
 ```
-http://127.9.63.30:5042/tareas?id=1
-```
-
-## Buscar tareas por estado pendientes
-```
-http://127.9.63.30:5042/tareas?estado=Pendiente
-
-    "tipo_estado": "Pendiente
+  "tipo_estado": "Pendiente
     "tipo_estado": "En progreso"
     "tipo_estado": "Completado"
     "tipo_estado": "Cancelado"
@@ -210,7 +203,19 @@ http://127.9.63.30:5042/tareas?estado=Pendiente
     "tipo_estado": "Finalizado"
 ```
 
-## Buscar tareas por gruupo
+## Buscar tareas por id
+
+```
+http://127.9.63.30:5042/tareas?id=1
+```
+
+## Buscar tareas por estado pendientes
+```
+http://127.9.63.30:5042/tareas?estado=Pendiente
+
+```
+
+## Buscar tareas por grupo
 
 ```
 http://127.9.63.30:5042/tareas?grupo=Grupo%20C //el %20 es por el espacio, si el nombre del grupo no tuviese espacio seria sin este
@@ -226,3 +231,14 @@ http://127.9.63.30:5042/tareas?grupo=Grupo%20C //el %20 es por el espacio, si el
     "Grupo%20I",
     "Grupo%20J"
 ```
+## Buscar numero de tareas por estado en cada grupo
+```
+http://127.9.63.30:5042/tareas?numTare=Pendiente
+
+```
+
+## Buscar tareas por estado en cada grupo
+```
+http://127.9.63.30:5042/tareas?numTareGrupo=Pendiente
+```
+

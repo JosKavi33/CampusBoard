@@ -38,7 +38,6 @@ storageTarea.use((req, res, next) => {
     next();
 })
 storageTarea.use(expressQueryBoolean());
-// Función para obtener tareas por ID
 const getTareaById = (id) => {
     return new Promise((resolve, reject) => {
     const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
@@ -51,8 +50,6 @@ const getTareaById = (id) => {
     });
     });
 };
-
-// Función para obtener tareas por estado
 const getTareaByEstado = (estado) => {
     return new Promise((resolve, reject) => {
     const sql = [
@@ -71,8 +68,52 @@ const getTareaByEstado = (estado) => {
     });
     });
 };
-
-// Función para obtener tareas por grupo
+const getNumTareaByEstado = (numTare) => {
+    return new Promise((resolve, reject) => {
+        const sql = [
+            `SELECT g.nombre_grupo, e.tipo_estado, COUNT(*) AS numero_tareas
+            FROM tareas t
+            INNER JOIN estado e ON t.estado_tarea = e.id_estado
+            INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+            INNER JOIN usuario u ON tu.id_usuario = u.id_usuario
+            INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+            INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+            WHERE e.tipo_estado = ?
+            GROUP BY g.nombre_grupo, e.tipo_estado;`,
+            numTare
+        ];
+        con.query(...sql, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
+const getNumTareaByEstadoGrupo = (numTareGrupo) => {
+    return new Promise((resolve, reject) => {
+        const sql = [
+            `SELECT g.nombre_grupo, t.tarea_asignada
+            FROM tareas t
+            INNER JOIN estado e ON t.estado_tarea = e.id_estado
+            INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+            INNER JOIN usuario u ON tu.id_usuario = u.id_usuario
+            INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+            INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+            WHERE e.tipo_estado = ?
+            GROUP BY g.nombre_grupo, t.tarea_asignada;`,
+            numTareGrupo
+        ];
+        con.query(...sql, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
 const getTareaByGrupo = (grupo) => {
     return new Promise((resolve, reject) => {
     const sql = [
@@ -93,7 +134,27 @@ const getTareaByGrupo = (grupo) => {
     });
     });
 };
-// Handler para la ruta de tareas
+const getAllTareasWithEstados = () => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        SELECT g.nombre_grupo, e.tipo_estado, COUNT(*) AS numero_tareas
+        FROM tareas t
+        INNER JOIN estado e ON t.estado_tarea = e.id_estado
+        INNER JOIN tarea_usuario tu ON t.id_tarea = tu.id_tarea
+        INNER JOIN usuario u ON tu.id_usuario = u.id_usuario
+        INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+        INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+        GROUP BY g.nombre_grupo, e.tipo_estado
+        `;
+        con.query(sql, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
 storageTarea.get("/", proxyTarea, async (req, res) => {
     try {
     if (req.query.id) {
@@ -102,10 +163,16 @@ storageTarea.get("/", proxyTarea, async (req, res) => {
     } else if (req.query.estado) {
         const data = await getTareaByEstado(req.query.estado);
         res.send(data);
+    } else if (req.query.numTare) {
+        const data = await getNumTareaByEstado(req.query.numTare);
+        res.send(data); 
+    } else if (req.query.numTareGrupo) {
+        const data = await getNumTareaByEstadoGrupo(req.query.numTareGrupo);
+        res.send(data);
     } else if (req.query.grupo) {
         const data = await getTareaByGrupo(req.query.grupo);
         res.send(data);
-    } else {
+    } else { 
         const sql = [`SELECT * FROM tareas`];
         con.query(...sql, (err, data) => {
         if (err) {
@@ -121,6 +188,15 @@ storageTarea.get("/", proxyTarea, async (req, res) => {
     res.sendStatus(500);
     }
 });
+storageTarea.get("/all", proxyTarea, async (req, res) => {
+    try {
+        const data = await getAllTareasWithEstados();
+        res.send(data);
+    } catch (err) {
+        console.error("Ocurrió un error al obtener todas las tareas con estados:", err.message);
+        res.sendStatus(500);
+    }
+}); 
 storageTarea.post("/", proxyTarea ,async (req, res) => {
     con.query(
         /*sql*/
