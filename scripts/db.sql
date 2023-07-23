@@ -507,7 +507,7 @@ INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
 INNER JOIN usuario u ON pu.id_usuario = u.id_usuario
 INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
 INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
-WHERE e.tipo_estado = 'pendiente'
+WHERE e.tipo_estado = 'Pendiente'
 GROUP BY g.nombre_grupo, p.nombre_proyecto;
 /*  
 ?Consulta Todo 

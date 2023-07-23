@@ -251,3 +251,15 @@ http://127.9.63.30:5042/proyecto?estado=Pendiente
 ```
 http://127.9.63.30:5042/proyecto?grupo=Grupo%20C
 ```
+
+## Estado de Proyectos por grupo
+
+```
+http://127.9.63.30:5042/proyecto?estadoProyectoGrupo=Grupo%20A
+```
+
+## Proyectos por usuario
+
+```
+http://127.9.63.30:5042/proyecto?usuario=Proyecto%20C
+```

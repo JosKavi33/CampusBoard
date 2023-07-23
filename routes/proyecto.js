@@ -53,6 +53,22 @@ const getProyectoById = (id) => {
     });
     });
 };
+const getProyectoByUsuario = (usuario) => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT u.*
+    FROM usuario u
+    INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+    INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+    WHERE p.nombre_proyecto = ?`, usuario];
+    con.query(...sql, (err, data) => {
+        if (err) {
+        reject(err);
+        } else {
+        resolve(data);
+        }
+    });
+    });
+};
 const getProyectoByEstado = (estado) => {
     return new Promise((resolve, reject) => {
     const sql = [
@@ -112,6 +128,29 @@ const getProyectoByGrupo = (grupo) => {
     });
     });
 };
+const getProyectoByGrupoEstado = (grupoEstado) => {
+    return new Promise((resolve, reject) => {
+    const sql = [
+        `SELECT g.nombre_grupo, p.nombre_proyecto
+        FROM proyecto p
+        INNER JOIN estado e ON p.estado_proyecto = e.id_estado
+        INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
+        INNER JOIN usuario u ON pu.id_usuario = u.id_usuario
+        INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+        INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+        WHERE e.tipo_estado = ?
+        GROUP BY g.nombre_grupo, p.nombre_proyecto;`,
+        grupoEstado
+    ];
+    con.query(...sql, (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+    });
+};
 storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
     try {
         if (req.query.id) {
@@ -125,6 +164,12 @@ storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
             res.send(data); 
         } else if (req.query.estadoProyectoGrupo) {
             const data = await getProyectoByEstadoGrupo(req.query.estadoProyectoGrupo);  
+            res.send(data); 
+        } else if (req.query.usuario) {
+            const data = await getProyectoByUsuario(req.query.usuario);  
+            res.send(data); 
+        } else if (req.query.grupoEstado) {
+            const data = await getProyectoByGrupoEstado(req.query.grupoEstado);
             res.send(data); 
         }else {
             const sql = [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
