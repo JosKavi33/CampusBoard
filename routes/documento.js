@@ -11,7 +11,6 @@ storageDocumento.use(session({
     resave: false, 
     saveUninitialized: true,   
 }));
-
 storageDocumento.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
