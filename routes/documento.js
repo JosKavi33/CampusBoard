@@ -57,7 +57,6 @@ storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
         }
     );
 })
-
 storageDocumento.post("/", proxyDocumento ,async (req, res) => {
     con.query( 
         /*sql*/
