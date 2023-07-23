@@ -14,7 +14,7 @@ storageTarea.use(session({
 storageTarea.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
-        const payload = { body: req.body, params: req.params, id: req.params.id  };
+        const payload = { body: req.body, params: req.params };
         const jwtconstructor = new SignJWT(payload);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
@@ -36,31 +36,33 @@ storageTarea.use((req, res, next) => {
     con = mysql.createPool(myConfig)
     next();
 })
-storageTarea.get("/:id?", proxyTarea , async (req,res)=>{
-    const jwt = req.session.jwt; 
-    const encoder = new TextEncoder();  
+storageTarea.get("/:id?/:id_estado?", proxyTarea, async (req, res) => {
+    const jwt = req.session.jwt;
+    const encoder = new TextEncoder();
     const jwtData = await jwtVerify(
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
-    )
-    if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        return res.sendStatus(403);
+    );
+    let sql;
+    if (req.params.id_estado) {
+        sql = [`SELECT t.*
+                FROM tareas t
+                INNER JOIN estado e ON t.estado_tarea = e.id_estado
+                WHERE e.tipo_estado = ?`, req.params.id_estado];
+    } else if (req.params.id) { 
+        sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, req.params.id];
+    } else {
+        sql = [`SELECT * FROM tareas`];
     }
-    let sql = (jwtData.payload.id)
-        ? [`SELECT id_tarea, tarea_asignada, tiempo_inicio, tiempo_entrega,
-        estado.tipo_estado AS estado_tarea
-        FROM tareas 
-        INNER JOIN estado  ON estado_tarea = estado.id_estado WHERE id_tarea = ?`, jwtData.payload.id]  
-        : [`SELECT id_tarea, tarea_asignada, tiempo_inicio, tiempo_entrega,
-        estado.tipo_estado AS estado_tarea
-        FROM tareas 
-        INNER JOIN estado  ON estado_tarea = estado.id_estado;`]; 
-    con.query(...sql,
-        (err, data, fie)=>{
+    con.query(...sql, (err, data) => {
+        if (err) {
+            console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
+            res.status(err.status);
+        } else {
             res.send(data);
         }
-    );
-})
+    });
+});
 storageTarea.post("/", proxyTarea ,async (req, res) => {
     con.query(
         /*sql*/

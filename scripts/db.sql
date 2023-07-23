@@ -321,8 +321,6 @@ INNER JOIN usuario u ON pu.id_usuario = u.id_usuario;
 /*  
 ?CONSULTAS
 */
-SELECT * FROM estado;
-SELECT * FROM tareas;
 /*  
 ?tareas por estado
 */
