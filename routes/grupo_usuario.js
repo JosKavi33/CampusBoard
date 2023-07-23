@@ -17,7 +17,7 @@ storageGrupoUsuario.use("/:id?", async (req, res, next) => {
         const payload = { body: req.body, params: req.params, id: req.params.id  };
         const jwtconstructor = new SignJWT(payload);
         const jwt = await jwtconstructor 
-            .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+            .setProtectedHeader({ alg: "HS256", typ: "JWT" }) 
             .setIssuedAt()
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
@@ -71,7 +71,7 @@ storageGrupoUsuario.post("/", proxyGrupoUsuario ,async (req, res) => {
     con.query(
         /*sql*/
         `INSERT INTO grupo_usuario SET ?`,
-        req.body,
+        await getBody(req),
         (err, result) => {
             if (err) {
                 console.error('Error al crear grupo_usuario:', err.message);
@@ -119,7 +119,6 @@ const getBody = async (req) =>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
-
     delete jwtData.payload.iat; 
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
