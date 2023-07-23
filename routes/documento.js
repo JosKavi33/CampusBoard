@@ -31,13 +31,11 @@ storageDocumento.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageDocumento.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 }) 
-
 storageDocumento.get("/:id?", proxyDocumento , async (req,res)=>{
     const jwt = req.session.jwt;
     const encoder = new TextEncoder();  
