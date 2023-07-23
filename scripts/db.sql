@@ -377,7 +377,7 @@ SELECT u.*
 FROM usuario u
 INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
 INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
-WHERE g.nombre_grupo = 'Grupo A';
+WHERE g.nombre_grupo = ?;
 /*  
 ?roles por grupo
 */
@@ -433,7 +433,7 @@ FROM usuario u
 INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
 INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
 INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
-WHERE g1.tipo_genero = 'Masculino' AND g2.nombre_grupo = 'Grupo A';
+WHERE g1.tipo_genero = 'Femenino' AND g2.nombre_grupo = 'Grupo B';
 /*  
 ?usuarios por genero en los proyectos
 */

@@ -263,3 +263,38 @@ http://127.9.63.30:5042/proyecto?estadoProyectoGrupo=Grupo%20A
 ```
 http://127.9.63.30:5042/proyecto?usuario=Proyecto%20C
 ```
+## Buscar Usuarios por id
+
+```
+http://127.9.63.30:5042/usuario?id=2
+```
+
+## Buscar Usuarios por tipo de documento
+
+```
+http://127.9.63.30:5042/usuario?documento=Cedula
+```
+
+## Buscar Usuarios por genero 
+
+```
+http://127.9.63.30:5042/usuario?genero=Masculino
+```
+
+## Buscar Usuarios por rol
+
+```
+http://127.9.63.30:5042/usuario?rol=Administrador
+```
+
+## Buscar Usuarios por grupo
+
+```
+http://127.9.63.30:5042/usuario?grupo=Grupo%20A
+```
+
+## Buscar Usuarios por rol en los grupos
+
+```
+http://127.9.63.30:5042/usuario?genero=Masculino&grupo=Grupo%20A
+```
