@@ -71,16 +71,38 @@ const getProyectoByEstado = (estado) => {
     });
     });
 };
-
+const getProyectoByGrupo = (grupo) => {
+    return new Promise((resolve, reject) => {
+    const sql = [
+        `SELECT p.*
+        FROM proyecto p
+        INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
+        INNER JOIN grupo_usuario gu ON pu.id_usuario = gu.id_usuario
+        INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
+        WHERE g.nombre_grupo = ?`,
+        grupo
+    ];
+    con.query(...sql, (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }
+    });
+    });
+};
 storageProyecto.get("/:id?", proxyProyecto, async (req,res)=>{
     try {
         if (req.query.id) {
             const data = await getProyectoById(req.query.id);
             res.send(data);
+        } else if (req.query.grupo) {
+            const data = await getProyectoByGrupo(req.query.grupo);
+            res.send(data); 
         } else if (req.query.estado) {
             const data = await getProyectoByEstado(req.query.estado);
-            res.send(data);
-        } else { 
+            res.send(data); 
+        } else {
             const sql = [`SELECT id_proyecto, nombre_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto,
             estado.tipo_estado AS estado_proyecto
             FROM proyecto 

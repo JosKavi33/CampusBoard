@@ -241,4 +241,8 @@ http://127.9.63.30:5042/tareas?numTare=Pendiente
 ```
 http://127.9.63.30:5042/tareas?numTareGrupo=Pendiente
 ```
+## Buscar Proyecto por estado
 
+```
+http://127.9.63.30:5042/proyecto?estado=Pendiente
+```

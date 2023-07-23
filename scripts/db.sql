@@ -331,10 +331,10 @@ WHERE e.tipo_estado = 'Pendiente'; */
 /*  
 ?proyecto por estado
 */
-SELECT p.*
+/* SELECT p.*
 FROM proyecto p
 INNER JOIN estado e ON p.estado_proyecto = e.id_estado
-WHERE e.tipo_estado = ?;
+WHERE e.tipo_estado = ? */;
 /*  
 ?usuarios por tipo de documento 
 */
@@ -395,7 +395,7 @@ FROM proyecto p
 INNER JOIN proyecto_usuario pu ON p.id_proyecto = pu.id_proyecto
 INNER JOIN grupo_usuario gu ON pu.id_usuario = gu.id_usuario
 INNER JOIN grupo g ON gu.id_grupo = g.id_grupo
-WHERE g.nombre_grupo = 'Grupo C';
+WHERE g.nombre_grupo = ?;
 /*  
 ?tareas por grupo
 */
