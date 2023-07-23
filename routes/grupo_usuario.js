@@ -11,7 +11,6 @@ storageGrupoUsuario.use(session({
     resave: false, 
     saveUninitialized: true,   
 }));
-
 storageGrupoUsuario.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
@@ -32,13 +31,11 @@ storageGrupoUsuario.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageGrupoUsuario.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
-
 storageGrupoUsuario.get("/:id?", proxyGrupoUsuario , async (req,res)=>{
     const jwt = req.session.jwt;
     const encoder = new TextEncoder();  
@@ -46,7 +43,6 @@ storageGrupoUsuario.get("/:id?", proxyGrupoUsuario , async (req,res)=>{
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-
     if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
         return res.sendStatus(403);
     }
@@ -71,7 +67,6 @@ storageGrupoUsuario.get("/:id?", proxyGrupoUsuario , async (req,res)=>{
         }
     );
 })
-
 storageGrupoUsuario.post("/", proxyGrupoUsuario ,async (req, res) => {
     con.query(
         /*sql*/
@@ -87,8 +82,6 @@ storageGrupoUsuario.post("/", proxyGrupoUsuario ,async (req, res) => {
         }
     );
 });
-
-
 storageGrupoUsuario.put("/:id", proxyGrupoUsuario ,(req, res) => {
     con.query(
         /*sql*/
@@ -131,4 +124,4 @@ const getBody = async (req) =>{
     delete jwtData.payload.exp;   
     return jwtData.payload.body 
 }
-export default storageGrupoUsuario; 
+export default storageGrupoUsuario;
