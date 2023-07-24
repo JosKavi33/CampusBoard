@@ -1,12 +1,15 @@
+
 # CAMPUSBOARD
 
 En este proyecto vamos a construir un Backend, para una aplicacion de asiganacion de tareas grupales, usuario(puede ser lider o participante)
 con tiempos de inicio, tiempos de terminacion, grupos de trabajos, reasiganacion de tareas
 y traslado de integrantes entre grupos
 
+
 # OBJETIVOS ESPECIFICOS
 
 CampusBoard, es una aplicacion de uso institucional, donde los campers podran entrenar la metodologia Scrum, mediante la creacion de proyectos por tareas tiempos definidos
+
 
 # OBJETIVOS ESPECIFICOS
 
@@ -20,11 +23,12 @@ CampusBoard, es una aplicacion de uso institucional, donde los campers podran en
 3. Gestión de tareas:
    - Los usuarios podrán ver todas las tareas asignadas a ellos en un panel personalizado.
    - Podrán actualizar el estado de las tareas (por ejemplo, "por hacer", "en progreso", "completada", etc.).
-   - Será posible asignar comentarios y adjuntar archivos a las tareas para facilitar la comunicación y documentación.
+
 
 # DISEÑO BASE DE DATOS
 
 <img src="img/DiagramaCampusBoard.png" alt="MySQL Logo" width="1280">
+
 
 ## Tecnologias Implementadas
 
@@ -37,16 +41,81 @@ CampusBoard, es una aplicacion de uso institucional, donde los campers podran en
 <img src="img/2560px-Npm-logo.svg.png" alt="MySQL Logo" width="100">
 </div> 
 
+
 # Dependencias Implementadas
 
-Express
-express-session
-class-transformer
-reflect-metadata
-mysql2
-dotenv
-nodemon
+Express,
+express-session,
+class-transformer,
+reflect-metadata,
+mysql2,
+dotenv,
+nodemon,
 typescript
+
+
+# Instalacion Dependencias
+
+1. Inicializar el archivo package.json en la consola:
+```
+npm init -y
+```
+2. Instalar nodemon (para desarrollo):
+```
+npm i -E -D nodemon
+```
+3. Instalar Express (framework web):
+```
+npm i -E -D express
+```
+4. Instalar dotenv (para gestionar variables de entorno):
+```
+npm i -E -D dotenv
+```
+5. Instalar mysql2 (para la conexión con la base de datos):
+```
+npm i -E -D mysql2
+```
+6. Instalar class-transformer (para la transformación de datos):
+```
+npm i -E -D class-transformer
+```
+7. Instalar reflect-metadata (para habilitar los decoradores):
+```
+npm i -E -D reflect-metadata
+```
+8. Instalar TypeScript (para el soporte de tipado):
+```
+npm i -E -D typescript
+```
+
+## Configuracion del .env
+
+En el archivo .env, configurar las siguientes variables de conexión a la base de datos:
+
+```
+MY_CONFIG={"hostname": "", "port":}
+MY_CONNECT={"host":"localhost","user":"","database":"","password":"","port":}
+
+```
+
+## Configuracion del tsconfig
+
+En el archivo tsconfig.json, agregar las siguientes opciones de configuración:
+
+```
+{
+    "compilerOptions":{
+        "target":"es6",
+        "module":"ES6",
+        "moduleResolution":"node",
+        "outDir":"./dtocontroller",
+        "esModuleInterop":true,
+        "experimentalDecorators":true,
+        "emitDecoratorMetadata": true
+    }
+}
+```
 
 ## Validacion De Token 
 
@@ -160,7 +229,27 @@ req.session.jwt = jwt;
 const jwt = req.session.jwt;
 ```
 
-### Tiempo de expiracion de permanencia de la cookir
+## Implementacion de los jwt y Coookies en el GET antes de enviar solicitud a la DB
+
+<img src="./img/getjwt.png">
+
+## Implementacion de los jwt y Cookies en el metodo POST
+
+<img src="./img/jwtpost.png">
+
+## Implementacion de los jwt y Cookies en el metodo PUT
+
+<img src="./img/jwtput.png">
+
+## Implementacion de los jwt y Cookies en el metodo DELETE
+
+<img src="./img/jwtdel.png">
+
+## Implementacion de los jwt y Cookies en el Archivo Middlewawre
+
+<img src="./img/middleware.png">
+
+### Tiempo de expiracion de permanencia de la cookies
 
 Con esto eliminamos el tiempo de persistencia de la cookie en el navegador, ademas del masAge, tambien podemos usar "expire". 
 ```
@@ -188,10 +277,67 @@ const getBody = async (req) =>{
 
 # CONSULTAS
 
+## GET Para todas las tablas
+
+Donde '?', es el nombre de cualquier tabla, nos arrojara el contenido de estas mismas
+TABLAS{
+    documento,
+    email,
+    estado,
+    genero,
+    grupo_usuario,
+    grupo,
+    proyecto_usuario,
+    proyecto,
+    rol_usuario,
+    rol,
+    tarea_usuario,
+    tareas,
+    telefono,
+    usuario
+}
+```
+http://127.9.63.30:5042/?
+```
+EJEMPLO:
+
+<img src="./img/gets.png">
+
+## Consulta por ID para las tablas que no contienen consultas especiales
+
+<div style="color:blue">"NOTA : ESTAS TABLAS GENERAN CONSULTA POR ESTAS URL, PORQUE NO ESTAN IMPLEMENTANDO 'express-query-boolean'"</div>
+
+
+TABLAS PARA ESTA CONSULTA{
+    documento,
+    email,
+    estado,
+    grupo_usuario,
+    proyecto_usuario,
+    rol_usuario,
+    rol,
+    tarea_usuario,
+    telefono,
+}
+
+Donde ?, es el id que buscamos en la tabla deseada
+
+```
+http://127.9.63.30:5042/{nombre de la tabla}/?
+```
+
+EJEMPLO:
+
+<img src="./img/getporid.png">
+
+# CONSULTAS ESPECIFICAS
+
+A continuación, se muestran algunas de las consultas específicas disponibles en la API:
+
 ## Estados
 
 ```
-  "tipo_estado": "Pendiente
+    "tipo_estado": "Pendiente
     "tipo_estado": "En progreso"
     "tipo_estado": "Completado"
     "tipo_estado": "Cancelado"
@@ -206,19 +352,21 @@ const getBody = async (req) =>{
 ## Buscar tareas por id
 
 ```
-http://127.9.63.30:5042/tareas?id=1
+http://127.9.63.30:5042/tareas?id=?
 ```
+<img src="./img/tareasid.png">
 
-## Buscar tareas por estado pendientes
+## Buscar tareas por estado
 ```
-http://127.9.63.30:5042/tareas?estado=Pendiente
+http://127.9.63.30:5042/tareas?estado=?
 
 ```
+<img src="./img/tareaestado.png">
 
 ## Buscar tareas por grupo
 
 ```
-http://127.9.63.30:5042/tareas?grupo=Grupo%20C //el %20 es por el espacio, si el nombre del grupo no tuviese espacio seria sin este
+http://127.9.63.30:5042/tareas?grupo=? //el %20 es por el espacio, si el nombre del grupo no tuviese espacio seria sin este
 
     "Grupo%20A",
     "Grupo%20B",
@@ -231,67 +379,83 @@ http://127.9.63.30:5042/tareas?grupo=Grupo%20C //el %20 es por el espacio, si el
     "Grupo%20I",
     "Grupo%20J"
 ```
+<img src="./img/tarasgrupo.png">
+
 ## Buscar numero de tareas por estado en cada grupo
 ```
-http://127.9.63.30:5042/tareas?numTare=Pendiente
+http://127.9.63.30:5042/tareas?numTare=?
 
 ```
+<img src="./img/tareasestadogrupo.png">
 
 ## Buscar tareas por estado en cada grupo
 ```
-http://127.9.63.30:5042/tareas?numTareGrupo=Pendiente
+http://127.9.63.30:5042/tareas?numTareGrupo=?
 ```
+<img src="./img/tareasgrupoestado.png">
+
 ## Buscar Proyecto por estado
 
 ```
-http://127.9.63.30:5042/proyecto?estado=Pendiente
+http://127.9.63.30:5042/proyecto?estado=?
 ```
+<img src="./img/proyectoporestado.png">
+
 ## Proyectos por grupo
 
 ```
 http://127.9.63.30:5042/proyecto?grupo=Grupo%20C
 ```
+<img src="./img/proyectogrupo.png">
 
 ## Estado de Proyectos por grupo
 
 ```
-http://127.9.63.30:5042/proyecto?estadoProyectoGrupo=Grupo%20A
+http://127.9.63.30:5042/proyecto?estadoProyectoGrupo=?
 ```
+<img src="./img/estadoproyectogrupo.png">
 
 ## Proyectos por usuario
 
 ```
-http://127.9.63.30:5042/proyecto?usuario=Proyecto%20C
+http://127.9.63.30:5042/proyecto?usuario=?
 ```
+<img src="./img/proyectousuario.png">
+
 ## Buscar Usuarios por id
 
 ```
-http://127.9.63.30:5042/usuario?id=2
+http://127.9.63.30:5042/usuario?id=?
 ```
+<img src="./img/usuarioID.png">
 
 ## Buscar Usuarios por tipo de documento
 
 ```
-http://127.9.63.30:5042/usuario?documento=Cedula
+http://127.9.63.30:5042/usuario?documento=?
 ```
+<img src="./img/usuariodoc.png">
 
 ## Buscar Usuarios por genero 
 
 ```
-http://127.9.63.30:5042/usuario?genero=Masculino
+http://127.9.63.30:5042/usuario?genero=?
 ```
+<img src="./img/usuariogen.png">
 
 ## Buscar Usuarios por rol
 
 ```
-http://127.9.63.30:5042/usuario?rol=Administrador
+http://127.9.63.30:5042/usuario?rol=?
 ```
+<img src="./img/usuariorol.png">
 
 ## Buscar Usuarios por grupo
 
 ```
-http://127.9.63.30:5042/usuario?grupo=Grupo%20A
+http://127.9.63.30:5042/usuario?grupo=?
 ```
+<img src="./img/usuariogrupo.png">
 
 ## Buscar Usuarios por rol en los grupos
 
@@ -302,17 +466,20 @@ http://127.9.63.30:5042/usuario?genero=Masculino&grupo=Grupo%20A
 ## Buscar Genero por id
 
 ```
-http://127.9.63.30:5042/genero?id=2
+http://127.9.63.30:5042/genero?id=?
 ```
+<img src="./img/generoid.png">
 
 ## Buscar Generos por documento
 
 ```
 http://127.9.63.30:5042/genero/genero-y-documento
 ```
+<img src="./img/gendoc.png">
 
 ## Traer Toda la informacion de los grupos
 
 ```
 http://127.9.63.30:5042/grupo/todo
 ```
+<img src="./img/todo.png">
