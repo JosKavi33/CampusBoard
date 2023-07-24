@@ -1,4 +1,5 @@
 import session from 'express-session';
+import expressQueryBoolean from 'express-query-boolean';
 import mysql from 'mysql2';
 import {Router} from 'express';
 import { SignJWT, jwtVerify } from 'jose';
@@ -12,6 +13,39 @@ storageGrupo.use(session({
     saveUninitialized: true,   
 }));
 
+storageGrupo.use(expressQueryBoolean());
+const getGrupoById = (id) => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT * FROM grupo WHERE id_grupo = ?`, id];
+    con.query(...sql, (err, data) => {
+        if (err) {
+        reject(err);
+        } else {
+        resolve(data);
+        }
+    });
+    });
+};
+const getGrupoTodo = () => {
+    return new Promise((resolve, reject) => {
+    const sql = [`SELECT g.nombre_grupo, u.nombre_completo_usuario, r.nombre_rol, p.nombre_proyecto, e.tipo_estado
+    FROM grupo g
+    LEFT JOIN grupo_usuario gu ON g.id_grupo = gu.id_grupo
+    LEFT JOIN usuario u ON gu.id_usuario = u.id_usuario
+    LEFT JOIN rol_usuario ru ON u.id_usuario = ru.id_usuario
+    LEFT JOIN rol r ON ru.id_rol = r.id_rol
+    LEFT JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+    LEFT JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+    LEFT JOIN estado e ON p.estado_proyecto = e.id_estado;`];
+    con.query(...sql, (err, data) => {
+        if (err) {
+        reject(err);
+        } else {
+        resolve(data);
+        }
+    });
+    });
+};
 storageGrupo.use("/:id?", async (req, res, next) => {
     try {  
         const encoder = new TextEncoder();
@@ -32,33 +66,41 @@ storageGrupo.use("/:id?", async (req, res, next) => {
         res.sendStatus(500); 
     }
 });
-
 storageGrupo.use((req, res, next) => {
     let myConfig = JSON.parse(process.env.MY_CONNECT);
     con = mysql.createPool(myConfig)
     next();
 })
-
-storageGrupo.get("/:id?", proxyGrupo , async (req,res)=>{
-    const jwt = req.session.jwt; 
-    const encoder = new TextEncoder();  
-    const jwtData = await jwtVerify(
-        jwt,
-        encoder.encode(process.env.JWT_PRIVATE_KEY)
-    )
-    if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        return res.sendStatus(403);
-    }
-    let sql = (jwtData.payload.id)
-        ? [`SELECT * FROM grupo WHERE id_grupo = ?`, jwtData.payload.id]
-        : [`SELECT * FROM grupo`];
-    con.query(...sql,
-        (err, data, fie)=>{
+storageGrupo.get("/", proxyGrupo , async (req,res)=>{
+    try {
+        if (req.query.id) {
+            const data = await getGrupoById(req.query.id);
             res.send(data);
+        } else { 
+            const sql = [`SELECT * FROM grupo`]; 
+            con.query(...sql, (err, data) => {
+            if (err) {
+                console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
+                res.status(err.status || 500);
+            } else {
+                res.send(data);
+            }
+            });
         }
-    );
-})
-
+        } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+        }
+});
+storageGrupo.get("/todo", proxyGrupo, async (req, res) => {
+    try {
+        const data = await getGrupoTodo();
+        res.send(data);
+    } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
 storageGrupo.post("/", proxyGrupo , async(req, res) => {
     con.query(
         /*sql*/

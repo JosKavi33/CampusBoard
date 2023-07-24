@@ -310,3 +310,9 @@ http://127.9.63.30:5042/genero?id=2
 ```
 http://127.9.63.30:5042/genero/genero-y-documento
 ```
+
+## Traer Toda la informacion de los grupos
+
+```
+http://127.9.63.30:5042/grupo/todo
+```
