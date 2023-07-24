@@ -225,7 +225,7 @@ storageTarea.put("/:id", proxyTarea ,async (req, res) => {
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     ) 
-    con.query(`UPDATE tareas SET ? WHERE id_tareas = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
+    con.query(`UPDATE tareas SET ? WHERE id_tarea = ?`, [jwtData.payload.body, jwtData.payload.params.id], 
         (err, result) => { 
             if (err) {
                 console.error('Error al actualizar tareas:', err.message);
@@ -243,9 +243,9 @@ storageTarea.delete("/:id",async (req, res) => {
         jwt,
         encoder.encode(process.env.JWT_PRIVATE_KEY)
     )
-    con.query(`DELETE FROM tareas WHERE id_tareas = ?`, jwtData.payload.params.id, 
+    con.query(`DELETE FROM tareas WHERE id_tarea = ?`, jwtData.payload.params.id, 
         (err,info)=>{
-        if(err) {
+        if(err) { 
             console.error(`error eliminando tareas ${req.params.id}: `, err.message);
             res.status(err.status)
         } else {

@@ -6,12 +6,12 @@ con tiempos de inicio, tiempos de terminacion, grupos de trabajos, reasiganacion
 y traslado de integrantes entre grupos
 
 
-# OBJETIVOS ESPECIFICOS
+## OBJETIVOS ESPECIFICOS
 
 CampusBoard, es una aplicacion de uso institucional, donde los campers podran entrenar la metodologia Scrum, mediante la creacion de proyectos por tareas tiempos definidos
 
 
-# OBJETIVOS ESPECIFICOS
+## OBJETIVOS ESPECIFICOS
 
 1. Organización de proyectos:
    - Los usuarios podrán crear proyectos dentro de la plataforma "CAMPUSBOARD".
@@ -29,8 +29,9 @@ CampusBoard, es una aplicacion de uso institucional, donde los campers podran en
 
 <img src="img/DiagramaCampusBoard.png" alt="MySQL Logo" width="1280">
 
+---
 
-## Tecnologias Implementadas
+# TECNOLOGIAS IMPLEMENTADAS
 
 <div>
 <img src="img/nodejs-1-logo.svg" alt="MySQL Logo" width="100">
@@ -42,7 +43,7 @@ CampusBoard, es una aplicacion de uso institucional, donde los campers podran en
 </div> 
 
 
-# Dependencias Implementadas
+# DEPENDENCIAS IMPLEMENTADAS
 
 Express,
 express-session,
@@ -54,7 +55,7 @@ nodemon,
 typescript
 
 
-# Instalacion Dependencias
+# INTALACION DEPENDENCIAS
 
 1. Inicializar el archivo package.json en la consola:
 ```
@@ -89,7 +90,7 @@ npm i -E -D reflect-metadata
 npm i -E -D typescript
 ```
 
-## Configuracion del .env
+# CONFIGURACION DEL .env
 
 En el archivo .env, configurar las siguientes variables de conexión a la base de datos:
 
@@ -99,7 +100,7 @@ MY_CONNECT={"host":"localhost","user":"","database":"","password":"","port":}
 
 ```
 
-## Configuracion del tsconfig
+# CONFIGURACION tsconfig
 
 En el archivo tsconfig.json, agregar las siguientes opciones de configuración:
 
@@ -117,7 +118,7 @@ En el archivo tsconfig.json, agregar las siguientes opciones de configuración:
 }
 ```
 
-## Validacion De Token 
+## VALIDACION TOKEN 
 
 Con esta linea verificamos que el token en la url coincida con el que generamos, esto debido a la persistencia de cookies de la url
 
@@ -135,7 +136,7 @@ Cuando un cliente (navegador) se conecta a una aplicación web, el servidor web 
 
 Con esto eliminamos la persistencia que tenia la cookiees, que nos hacia tener que dar a buscar dos veces
 
-# Instalacion
+# INTALACION
 
 ```
 npm i -E -D express-session
@@ -156,13 +157,13 @@ storageGenero.use(session({
 Es una libreri que nos permite parsear los parámetros de consulta y luego definir cada tipo de consulta en una función separada.
 Con este enfoque, cada tipo de consulta se maneja de manera separada en su propia función, lo que hace que el código sea más fácil de mantener y extender. Además, el uso de async/await y Promise permite manejar los errores de manera más efectiva
 
-### instalacion
+# INSTALACION
 
 ```
 npm i -E -D express-query-boolean
 ```
 
-## Definimos
+# DEFINIMOS
 
 Agregamos el middleware expressQueryBoolean para parsear los parámetros booleanos
 
@@ -186,7 +187,7 @@ const getTareaById = (id) => {
   });
 };
 ```
-Handler para la ruta de tareas
+## Handler para la ruta de tareas
 ```
 storageTarea.get("/", proxyTarea, async (req, res) => {
   try {
@@ -217,45 +218,52 @@ storageTarea.get("/", proxyTarea, async (req, res) => {
 });
 ```
 
-# Almacenar el JWT en la variable de sesión
+---
+
+## Almacenar el JWT en la variable de sesión
 
 ```
 req.session.jwt = jwt;
 ```
 
-# Obtener el JWT de la variable de sesión
+## Obtener el JWT de la variable de sesión
 
 ```
 const jwt = req.session.jwt;
 ```
 
-## Implementacion de los jwt y Coookies en el GET antes de enviar solicitud a la DB
+# Implementacion de los jwt y Coookies en el GET antes de enviar solicitud a la DB
 
 <img src="./img/getjwt.png">
 
-## Implementacion de los jwt y Cookies en el metodo POST
+# Implementacion de los jwt y Cookies en el metodo POST
 
 <img src="./img/jwtpost.png">
 
-## Implementacion de los jwt y Cookies en el metodo PUT
+# Implementacion de los jwt y Cookies en el metodo PUT
 
 <img src="./img/jwtput.png">
 
-## Implementacion de los jwt y Cookies en el metodo DELETE
+# Implementacion de los jwt y Cookies en el metodo DELETE
 
 <img src="./img/jwtdel.png">
 
-## Implementacion de los jwt y Cookies en el Archivo Middlewawre
+# Implementacion de los jwt y Cookies en el Archivo Middlewawre
 
-<img src="./img/middleware.png">
+<img src="./img/middleware.png"> 
 
-### Tiempo de expiracion de permanencia de la cookies
+---
+
+# Tiempo de expiracion de permanencia de la cookies
 
 Con esto eliminamos el tiempo de persistencia de la cookie en el navegador, ademas del masAge, tambien podemos usar "expire". 
 ```
 const maxAgeInSeconds = 3600;
         res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
 ```
+
+---
+
 # Funcion getBody(req)
 
 Con esta funcion vamos a enviar los parametros obtenidos de jwt y pasar el cuerpo al metodo post, aca aplicamos ya la obttencion de la variable de sesion.
@@ -274,6 +282,8 @@ const getBody = async (req) =>{
     return jwtData.payload.body 
 }
 ```
+
+---
 
 # CONSULTAS
 
@@ -329,6 +339,46 @@ http://127.9.63.30:5042/{nombre de la tabla}/?
 EJEMPLO:
 
 <img src="./img/getporid.png">
+
+
+## Metodo POST para todas las tablas
+
+El metodo post funciona igual en todas las tablas, en la misma url del metodo get,
+dependiendo si la Base de Datos tiene el Id auto incremental, este parametro dentro del body puede ser 
+opcional. 
+El body es donde vamos a hacer la insersion de datos y contiene los campos de la tabla, para cada tabla el body 
+varia, por eso es importante tener presente los campos que corresponden a esta
+
+EJEMPLO:
+
+<img src="./img/POSTQ.png">
+<img src="./img/POSTS.png">
+
+
+## Metodo PUT para todas las tablas
+
+El metodo put funciona igual en todas las tablas, en la misma url del metodo tabla/id,
+este parametro id dentro del body se omite. 
+Rcuerda, el body es donde vamos a hacer la insersion de datos y contiene los campos de la tabla, para cada tabla el body 
+varia, por eso es importante tener presente los campos que corresponden a esta
+
+EJEMPLO:
+
+<img src="./img/put1.png">
+<img src="./img/put2.png">
+
+
+## Metodo DELETE para todas las tablas
+
+El metodo delete funciona igual en todas las tablas, en la misma url tabla/id,
+aunque en este metodo lo unico que necesitamos es esta url para efectuarlo
+
+EJEMPLO:
+
+<img src="./img/del.png">
+<img src="./img/del2.png">
+
+---
 
 # CONSULTAS ESPECIFICAS
 
@@ -483,3 +533,7 @@ http://127.9.63.30:5042/genero/genero-y-documento
 http://127.9.63.30:5042/grupo/todo
 ```
 <img src="./img/todo.png">
+
+---
+
+# [Author : Jose Alberto Cabrejo Villar]
