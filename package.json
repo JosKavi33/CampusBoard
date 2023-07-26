@@ -1,0 +1,31 @@
+{
+  "name": "campusboard",
+  "version": "1.0.0",
+  "description": "En este proyecto vamos a construir un Backend, para una aplicacion de asiganacion de tareas grupales, usuario(puede ser lider o participante) con tiempos de inicio, tiempos de terminacion, grupos de trabajos, reasiganacion de tareas y traslado de integrantes entre grupos",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc -w",
+    "dev": "nodemon --quiet ./app.js"
+  },
+  "keywords": [],
+  "author": "Jose Alberto Cabrejo Villar",
+  "license": "ISC",
+  "devDependencies": {
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.0",
+    "cookie-parser": "1.4.6",
+    "dotenv": "16.3.1",
+    "express": "4.18.2",
+    "express-query-boolean": "2.0.0",
+    "express-session": "1.17.3",
+    "jose": "4.14.4",
+    "mysql2": "3.5.2",
+    "nodemon": "3.0.1",
+    "reflect-metadata": "0.1.13",
+    "typescript": "5.1.6"
+  },
+  "dependencies": {
+    "install": "^0.13.0"
+  }
+}

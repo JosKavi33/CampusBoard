@@ -19,7 +19,7 @@ storageUsuario.use("/:id?", async (req, res, next) => {
         const jwtconstructor = new SignJWT(payload);
         const jwt = await jwtconstructor 
             .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-            .setIssuedAt()
+            .setIssuedAt() 
             .setExpirationTime("1h")
             .sign(encoder.encode(process.env.JWT_PRIVATE_KEY)); 
         req.body = payload.body;
@@ -160,10 +160,10 @@ const getUsuarioByGeneroYProyecto = (genero, proyecto) => {
         });
     });
 };
-storageUsuario.get("/", proxyUsuario, async (req, res) => {
+storageUsuario.get("//:data?/:data2?", proxyUsuario, async (req, res) => {
     try {
         const { id, documento, genero, rol, grupo, proyecto } = req.query;
-        if (id) {
+        if (id) { 
             const data = await getUsuarioById(id);
             res.send(data);
         } else if (documento) {

@@ -15,14 +15,17 @@ import storageProyectoUsuario from './routes/proyecto_usuario.js';
 import storageTareaUsuario from './routes/tarea_usuario.js';
 import storageGrupoUsuario from './routes/grupo_usuario.js';
 import storageRolUsuario from './routes/rol_usuario.js';
-
+import { generateToken ,validateToken } from './middleware/jwt.js';
 
 dotenv.config();
 const appExpress = express();
 
 appExpress.use(express.json());
 appExpress.use(cookieParser());
-appExpress.use("/estado", storageEstado);
+appExpress.get("/token", generateToken, (req,res)=>{
+    res.send({token: req.token})
+})
+appExpress.use("/estado", validateToken, storageEstado);
 appExpress.use("/documento", storageDocumento);
 appExpress.use("/genero", storageGenero);
 appExpress.use("/rol", storageRol);

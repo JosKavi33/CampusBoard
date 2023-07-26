@@ -52,7 +52,11 @@ reflect-metadata,
 mysql2,
 dotenv,
 nodemon,
-typescript
+typescript,
+jose,
+cookie-parser,
+express-session,
+express-boolean
 
 
 # INTALACION DEPENDENCIAS
@@ -65,39 +69,40 @@ npm init -y
 ```
 npm i -E -D nodemon
 ```
-3. Instalar Express (framework web):
+3. Para Instalar las Dependencias que estan en el package.json :
 ```
-npm i -E -D express
+npm i -E -D express dotenv mysql2 class-transformer reflect-metadata typescript 
 ```
-4. Instalar dotenv (para gestionar variables de entorno):
+3. Para Usar las Dependencias que estan en el package.json :
 ```
-npm i -E -D dotenv
+npm uodate 
 ```
-5. Instalar mysql2 (para la conexión con la base de datos):
+
+# CONFIGURACION DEL SCRIPT
+
 ```
-npm i -E -D mysql2
+"scripts": {
+    "tsc": "tsc -w",
+    "dev": "nodemon --quiet ./app.js"
+  }
 ```
-6. Instalar class-transformer (para la transformación de datos):
+
+# INICIAR nodemon
+
 ```
-npm i -E -D class-transformer
-```
-7. Instalar reflect-metadata (para habilitar los decoradores):
-```
-npm i -E -D reflect-metadata
-```
-8. Instalar TypeScript (para el soporte de tipado):
-```
-npm i -E -D typescript
+npm run dev
 ```
 
 # CONFIGURACION DEL .env
 
+Dentro de la ruta CAMPUSBOARD cree un archivo que se llame ".env"
 En el archivo .env, configurar las siguientes variables de conexión a la base de datos:
+En el campo de MY_CONFIG ingrese un hostname y un puerto a su elección. Recuerde que por defecto el local host requiere que el host name es 127.0.0.1
 
 ```
 MY_CONFIG={"hostname": "", "port":}
 MY_CONNECT={"host":"localhost","user":"","database":"","password":"","port":}
-
+JWT_PRIVATE_KEY=""
 ```
 
 # CONFIGURACION tsconfig
@@ -117,6 +122,19 @@ En el archivo tsconfig.json, agregar las siguientes opciones de configuración:
     }
 }
 ```
+
+# INICIAR tsc
+
+```
+npm run tsc
+```
+## INSTALACION BASE DE DATOS
+
+Abrimos la carpeta scripts, en el archivo db.sql y corremos todo, ya tiene incluido inserts
+
+## CONSULTAS
+
+La maquetacion de consultas que vamos a implementar estan almacenadas en el archivo consultas.sql dentro de la carpeta script
 
 ## VALIDACION TOKEN 
 
@@ -287,28 +305,59 @@ const getBody = async (req) =>{
 
 # CONSULTAS
 
+
+## FUNCIONAMIENTO Y ENDPOINTS.
+
+
+**CRUD DE LAS TABLAS**
+Los siguiente endPoints corresponden a los CRUDs de cada tabla. Para estos endPoints se pueden realizar las consultas básicas, get, get by id, post, put y delete. La entrada de los datos está encriptada usando JWT y cookies. Además se cuenta con un middleware que permite la validación de los datos antes de que ingresen para evitar consumir recursos innecesarios y evitar problemas con el ingreso de la data en la base de datos.  
+
+* EndPoint CRUD de la Tabla CAMPUSBOARD:
+  *http://${config.hostname}:${config.port}/documento*
+
+* EndPoint CRUD de la Tabla email: 
+  *http://${config.hostname}:${config.port}/email*
+
+* EndPoint CRUD de la Tabla estado:
+  *http://${config.hostname}:${config.port}/estado*
+
+* EndPoint CRUD de la Tabla genero: 
+  *http://${config.hostname}:${config.port}/genero*
+
+* EndPoint CRUD de la Tabla grupo_usuario:
+  *http://${config.hostname}:${config.port}/grupo_usuario*
+
+* EndPoint CRUD de la Tabla grupo: 
+  *http://${config.hostname}:${config.port}/grupo*
+
+* EndPoint CRUD de la Tabla proyecto_usuario: 
+  *http://${config.hostname}:${config.port}/proyecto_usuario*
+
+* EndPoint CRUD de la Tabla proyecto: 
+  *http://${config.hostname}:${config.port}/proyecto*
+
+* EndPoint CRUD de la Tabla rol_usuario: 
+  *http://${config.hostname}:${config.port}/rol_usaurio*
+
+* EndPoint CRUD de la Tabla rol: 
+  *http://${config.hostname}:${config.port}/rol*
+
+* EndPoint CRUD de la Tabla tarea_usuario: 
+  *http://${config.hostname}:${config.port}/tarea_usaurio*
+
+* EndPoint CRUD de la Tabla tareas: 
+  *http://${config.hostname}:${config.port}/tareas*
+
+* EndPoint CRUD de la Tabla telefono: 
+  *http://${config.hostname}:${config.port}/telefono*
+
+* EndPoint CRUD de la Tabla usuario: 
+  *http://${config.hostname}:${config.port}/usaurio*
+
+
 ## GET Para todas las tablas
 
-Donde '?', es el nombre de cualquier tabla, nos arrojara el contenido de estas mismas
-TABLAS{
-    documento,
-    email,
-    estado,
-    genero,
-    grupo_usuario,
-    grupo,
-    proyecto_usuario,
-    proyecto,
-    rol_usuario,
-    rol,
-    tarea_usuario,
-    tareas,
-    telefono,
-    usuario
-}
-```
-http://127.9.63.30:5042/?
-```
+
 EJEMPLO:
 
 <img src="./img/gets.png">
