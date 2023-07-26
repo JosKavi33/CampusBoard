@@ -5,7 +5,7 @@ export const generateToken = async (req, res, next) => {
     try {
         const encoder = new TextEncoder();
         const jwtconstructor = new SignJWT(req.body);
-        req.token = await jwtconstructor
+        req.token = await jwtconstructor 
             .setProtectedHeader({
                 alg: "HS256",
                 typ: "JWT"

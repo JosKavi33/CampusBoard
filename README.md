@@ -58,34 +58,34 @@ cookie-parser,
 express-session,
 express-boolean
 
+# IMPLEMENTACION PROYECTO
 
-# INTALACION DEPENDENCIAS
+### CLONACION DEL REPOSITORIO
 
-1. Inicializar el archivo package.json en la consola:
-```
-npm init -y
-```
-2. Instalar nodemon (para desarrollo):
-```
-npm i -E -D nodemon
-```
-3. Para Instalar las Dependencias que estan en el package.json :
-```
-npm i -E -D express dotenv mysql2 class-transformer reflect-metadata typescript 
-```
-3. Para Usar las Dependencias que estan en el package.json :
-```
-npm uodate 
-```
-
-# CONFIGURACION DEL SCRIPT
+Clonamos el repositorio con visual estudio code y lo guardamos en una carpeta de nuestra elección
 
 ```
-"scripts": {
-    "tsc": "tsc -w",
-    "dev": "nodemon --quiet ./app.js"
-  }
+https://github.com/JoseCabrejoVillarCampus/CampusBoard.git
 ```
+
+### INSTALACION DE DEPENDENCIAS
+
+Para Usar las Dependencias que estan en el package.json :
+```
+npm install
+```
+
+# CONFIGURACION DEL .env
+
+Dentro de la ruta CAMPUSBOARD cree un archivo que se llame ".env"
+En el archivo .env, configurar las siguientes variables de conexión a la base de datos:
+```
+MY_CONFIG={"hostname": "", "port":}
+MY_CONNECT={"host":"localhost","user":"","database":"CAMPUSBOARD","password":""}
+JWT_PRIVATE_KEY=""
+```
+En el campo de MY_CONFIG ingrese un hostname y un puerto a su elección(preferiblemente mayor al 5000). Recuerde que por defecto el local host requiere que el hostname es 127.0.0.1. pero puede ser,
+El user es el usuario de la base de datos registrado en Mysql, por defecto es root, database es el nombre de la base de datos y el passworld es la contraseña de el usuario Mysql
 
 # INICIAR nodemon
 
@@ -93,215 +93,32 @@ npm uodate
 npm run dev
 ```
 
-# CONFIGURACION DEL .env
-
-Dentro de la ruta CAMPUSBOARD cree un archivo que se llame ".env"
-En el archivo .env, configurar las siguientes variables de conexión a la base de datos:
-En el campo de MY_CONFIG ingrese un hostname y un puerto a su elección. Recuerde que por defecto el local host requiere que el host name es 127.0.0.1
-
-```
-MY_CONFIG={"hostname": "", "port":}
-MY_CONNECT={"host":"localhost","user":"","database":"","password":"","port":}
-JWT_PRIVATE_KEY=""
-```
-
-# CONFIGURACION tsconfig
-
-En el archivo tsconfig.json, agregar las siguientes opciones de configuración:
-
-```
-{
-    "compilerOptions":{
-        "target":"es6",
-        "module":"ES6",
-        "moduleResolution":"node",
-        "outDir":"./dtocontroller",
-        "esModuleInterop":true,
-        "experimentalDecorators":true,
-        "emitDecoratorMetadata": true
-    }
-}
-```
-
-# INICIAR tsc
+# SI SE REQUIERE HACER CAMBIOS EN EL DTO, INICIAR tsc
 
 ```
 npm run tsc
 ```
-## INSTALACION BASE DE DATOS
+# INSTALACION BASE DE DATOS
 
-Abrimos la carpeta scripts, en el archivo db.sql y corremos todo, ya tiene incluido inserts
+Primero verificamos que la base de datos este activa, luego abrimos la carpeta scripts, en el archivo db.sql y corremos todo, ya tiene incluido datos de prueba
 
-## CONSULTAS
+## CONSULTAS MAQUETACION
 
 La maquetacion de consultas que vamos a implementar estan almacenadas en el archivo consultas.sql dentro de la carpeta script
 
-## VALIDACION TOKEN 
+# GENERACION DE TOKEN DE ACCESO
 
-Con esta linea verificamos que el token en la url coincida con el que generamos, esto debido a la persistencia de cookies de la url
+Generar Token de acceso 
 
-```
-if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
-        return res.sendStatus(403);
-    }
-```
-
-# express-session
-
-Express-session es un middleware de Express que proporciona un sistema de gestión de sesiones para las aplicaciones web. Las sesiones son un mecanismo que permite a los servidores web mantener información sobre el estado de un usuario entre diferentes solicitudes del cliente.
-
-Cuando un cliente (navegador) se conecta a una aplicación web, el servidor web crea una sesión única para ese cliente. Esta sesión se identifica mediante un identificador único (un ID de sesión) que se envía al cliente en forma de cookie. En las solicitudes posteriores, el cliente incluirá este ID de sesión en las cabeceras de sus peticiones, lo que permite al servidor reconocer al cliente y mantener información específica relacionada con esa sesión.
-
-Con esto eliminamos la persistencia que tenia la cookiees, que nos hacia tener que dar a buscar dos veces
-
-# INTALACION
+- Generación: Una vez ejecutado el anterior comando, dirijase a la herramienta que va a utilizar:
 
 ```
-npm i -E -D express-session
+http://${config.hostname}:${config.port}/documento
 ```
 
-#Configurar la sesión
-```
-Configurar la sesión
-storageGenero.use(session({
-    secret: 'mi-secreto',
-    resave: false,
-    saveUninitialized: true,   
-}));
-```
+- Utilización: El endPoint anterior es el que va a generar el token. Tome ese token (solo el valor, sin comillas ni corchetes) y dirijase al apartado de HEADERS, agrege el header/Autorization y en el valor ingrese el token suministrado anteriormente.
 
-# express-query-boolean
-
-Es una libreri que nos permite parsear los parámetros de consulta y luego definir cada tipo de consulta en una función separada.
-Con este enfoque, cada tipo de consulta se maneja de manera separada en su propia función, lo que hace que el código sea más fácil de mantener y extender. Además, el uso de async/await y Promise permite manejar los errores de manera más efectiva
-
-# INSTALACION
-
-```
-npm i -E -D express-query-boolean
-```
-
-# DEFINIMOS
-
-Agregamos el middleware expressQueryBoolean para parsear los parámetros booleanos
-
-```
-storageTarea.use(expressQueryBoolean());
-```
-
-Función para obtener tareas por ID
-
-```
-const getTareaById = (id) => {
-  return new Promise((resolve, reject) => {
-    const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
-    con.query(...sql, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-};
-```
-## Handler para la ruta de tareas
-```
-storageTarea.get("/", proxyTarea, async (req, res) => {
-  try {
-    if (req.query.id) {
-      const data = await getTareaById(req.query.id);
-      res.send(data);
-    } else if (req.query.estado) {
-      const data = await getTareaByEstado(req.query.estado);
-      res.send(data);
-    } else if (req.query.grupo) {
-      const data = await getTareaByGrupo(req.query.grupo);
-      res.send(data);
-    } else {
-      const sql = [`SELECT * FROM tareas`];
-      con.query(...sql, (err, data) => {
-        if (err) {
-          console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
-          res.status(err.status || 500);
-        } else {
-          res.send(data);
-        }
-      });
-    }
-  } catch (err) {
-    console.error("Ocurrió un error al procesar la solicitud", err.message);
-    res.sendStatus(500);
-  }
-});
-```
-
----
-
-## Almacenar el JWT en la variable de sesión
-
-```
-req.session.jwt = jwt;
-```
-
-## Obtener el JWT de la variable de sesión
-
-```
-const jwt = req.session.jwt;
-```
-
-# Implementacion de los jwt y Coookies en el GET antes de enviar solicitud a la DB
-
-<img src="./img/getjwt.png">
-
-# Implementacion de los jwt y Cookies en el metodo POST
-
-<img src="./img/jwtpost.png">
-
-# Implementacion de los jwt y Cookies en el metodo PUT
-
-<img src="./img/jwtput.png">
-
-# Implementacion de los jwt y Cookies en el metodo DELETE
-
-<img src="./img/jwtdel.png">
-
-# Implementacion de los jwt y Cookies en el Archivo Middlewawre
-
-<img src="./img/middleware.png"> 
-
----
-
-# Tiempo de expiracion de permanencia de la cookies
-
-Con esto eliminamos el tiempo de persistencia de la cookie en el navegador, ademas del masAge, tambien podemos usar "expire". 
-```
-const maxAgeInSeconds = 3600;
-        res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
-```
-
----
-
-# Funcion getBody(req)
-
-Con esta funcion vamos a enviar los parametros obtenidos de jwt y pasar el cuerpo al metodo post, aca aplicamos ya la obttencion de la variable de sesion.
-
-```
-const getBody = async (req) =>{
-    const jwt = req.session.jwt; 
-    const encoder = new TextEncoder();  
-    const jwtData = await jwtVerify( 
-        jwt,
-        encoder.encode(process.env.JWT_PRIVATE_KEY)
-    );
-
-    delete jwtData.payload.iat; 
-    delete jwtData.payload.exp;   
-    return jwtData.payload.body 
-}
-```
-
----
+Este token tiene un limite de tiempo, en ese rango de tiempo podremos acceder a las rutas y endPoints de nuestra Api. Una vez pasada esta hora será necesario generar uno nuevo.
 
 # CONSULTAS
 
@@ -313,6 +130,8 @@ const getBody = async (req) =>{
 Los siguiente endPoints corresponden a los CRUDs de cada tabla. Para estos endPoints se pueden realizar las consultas básicas, get, get by id, post, put y delete. La entrada de los datos está encriptada usando JWT y cookies. Además se cuenta con un middleware que permite la validación de los datos antes de que ingresen para evitar consumir recursos innecesarios y evitar problemas con el ingreso de la data en la base de datos.  
 
 * EndPoint CRUD de la Tabla CAMPUSBOARD:
+Estos funciona  para POST/ GET/ DELETE/ PUT/,dentro del cliente que deseemos usar
+
   *http://${config.hostname}:${config.port}/documento*
 
 * EndPoint CRUD de la Tabla email: 
@@ -586,3 +405,173 @@ http://127.9.63.30:5042/grupo/todo
 ---
 
 # [Author : Jose Alberto Cabrejo Villar]
+
+# DOCUMENTACION
+
+## VALIDACION TOKEN 
+
+Con esta linea verificamos que el token en la url coincida con el que generamos, esto debido a la persistencia de cookies de la url
+
+```
+if (jwtData.payload.id && jwtData.payload.id !== req.params.id) {
+        return res.sendStatus(403);
+    }
+```
+
+## express-session
+
+Express-session es un middleware de Express que proporciona un sistema de gestión de sesiones para las aplicaciones web. Las sesiones son un mecanismo que permite a los servidores web mantener información sobre el estado de un usuario entre diferentes solicitudes del cliente.
+
+Cuando un cliente (navegador) se conecta a una aplicación web, el servidor web crea una sesión única para ese cliente. Esta sesión se identifica mediante un identificador único (un ID de sesión) que se envía al cliente en forma de cookie. En las solicitudes posteriores, el cliente incluirá este ID de sesión en las cabeceras de sus peticiones, lo que permite al servidor reconocer al cliente y mantener información específica relacionada con esa sesión.
+
+Con esto eliminamos la persistencia que tenia la cookiees, que nos hacia tener que dar a buscar dos veces
+
+# INTALACION
+
+```
+npm i -E -D express-session
+```
+
+#Configurar la sesión
+```
+Configurar la sesión
+storageGenero.use(session({
+    secret: 'mi-secreto',
+    resave: false,
+    saveUninitialized: true,   
+}));
+```
+
+# express-query-boolean
+
+Es una libreri que nos permite parsear los parámetros de consulta y luego definir cada tipo de consulta en una función separada.
+Con este enfoque, cada tipo de consulta se maneja de manera separada en su propia función, lo que hace que el código sea más fácil de mantener y extender. Además, el uso de async/await y Promise permite manejar los errores de manera más efectiva
+
+# INSTALACION
+
+```
+npm i -E -D express-query-boolean
+```
+
+# DEFINIMOS
+
+Agregamos el middleware expressQueryBoolean para parsear los parámetros booleanos
+
+```
+storageTarea.use(expressQueryBoolean());
+```
+
+Función para obtener tareas por ID
+
+```
+const getTareaById = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = [`SELECT * FROM tareas WHERE id_tarea = ?`, id];
+    con.query(...sql, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
+```
+## Handler para la ruta de tareas
+```
+storageTarea.get("/", proxyTarea, async (req, res) => {
+  try {
+    if (req.query.id) {
+      const data = await getTareaById(req.query.id);
+      res.send(data);
+    } else if (req.query.estado) {
+      const data = await getTareaByEstado(req.query.estado);
+      res.send(data);
+    } else if (req.query.grupo) {
+      const data = await getTareaByGrupo(req.query.grupo);
+      res.send(data);
+    } else {
+      const sql = [`SELECT * FROM tareas`];
+      con.query(...sql, (err, data) => {
+        if (err) {
+          console.error("Ocurrió un error intentando traer los datos de tareas", err.message);
+          res.status(err.status || 500);
+        } else {
+          res.send(data);
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Ocurrió un error al procesar la solicitud", err.message);
+    res.sendStatus(500);
+  }
+});
+```
+
+---
+
+## Almacenar el JWT en la variable de sesión
+
+```
+req.session.jwt = jwt;
+```
+
+## Obtener el JWT de la variable de sesión
+
+```
+const jwt = req.session.jwt;
+```
+
+# Implementacion de los jwt y Coookies en el GET antes de enviar solicitud a la DB
+
+<img src="./img/getjwt.png">
+
+# Implementacion de los jwt y Cookies en el metodo POST
+
+<img src="./img/jwtpost.png">
+
+# Implementacion de los jwt y Cookies en el metodo PUT
+
+<img src="./img/jwtput.png">
+
+# Implementacion de los jwt y Cookies en el metodo DELETE
+
+<img src="./img/jwtdel.png">
+
+# Implementacion de los jwt y Cookies en el Archivo Middlewawre
+
+<img src="./img/middleware.png"> 
+
+---
+
+# Tiempo de expiracion de permanencia de la cookies
+
+Con esto eliminamos el tiempo de persistencia de la cookie en el navegador, ademas del masAge, tambien podemos usar "expire". 
+```
+const maxAgeInSeconds = 3600;
+        res.cookie('token', jwt, { httpOnly: true, maxAge: maxAgeInSeconds * 1000 });
+```
+
+---
+
+# Funcion getBody(req)
+
+Con esta funcion vamos a enviar los parametros obtenidos de jwt y pasar el cuerpo al metodo post, aca aplicamos ya la obttencion de la variable de sesion.
+
+```
+const getBody = async (req) =>{
+    const jwt = req.session.jwt; 
+    const encoder = new TextEncoder();  
+    const jwtData = await jwtVerify( 
+        jwt,
+        encoder.encode(process.env.JWT_PRIVATE_KEY)
+    );
+
+    delete jwtData.payload.iat; 
+    delete jwtData.payload.exp;   
+    return jwtData.payload.body 
+}
+```
+
+---
+
