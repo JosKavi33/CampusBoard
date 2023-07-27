@@ -56,7 +56,7 @@ typescript,
 jose,
 cookie-parser,
 express-session,
-express-boolean
+express-query-boolean
 
 # IMPLEMENTACION PROYECTO
 
@@ -93,7 +93,9 @@ El user es el usuario de la base de datos registrado en Mysql, por defecto es ro
 npm run dev
 ```
 
-# SI SE REQUIERE HACER CAMBIOS EN EL DTO, INICIAR tsc
+# SI SE REQUIERE HACER CAMBIOS EN EL DTO O CREAR LOS CONTROLADORES NUEVAMENTE,  DEBES INICIAR tsc
+
+En una consola diferente a la que iniciamos el dev. El sigueitne comando iniciara el transpilador. En caso de borra la carpteta de los controladores este se creara nuevamente con el nombre que se le asigno en el tsconfig.json
 
 ```
 npm run tsc

@@ -120,11 +120,11 @@ const getUsuarioByGrupo = (grupo) => {
 const getUsuarioByGeneroYGrupo = (genero, grupo) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT u.*, g1.tipo_genero
-                     FROM usuario u
-                     INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
-                     INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
-                     INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
-                     WHERE g1.tipo_genero = ? AND g2.nombre_grupo = ?`;
+                    FROM usuario u
+                    INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+                    INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
+                    INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
+                    WHERE g1.tipo_genero = ? AND g2.nombre_grupo = ?`;
 
         con.query(sql, [genero, grupo], (err, data) => {
             if (err) {
@@ -141,11 +141,11 @@ const getUsuarioByGeneroYGrupo = (genero, grupo) => {
 const getUsuarioByGeneroYProyecto = (genero, proyecto) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT u.*, g.tipo_genero
-                     FROM usuario u
-                     INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
-                     INNER JOIN genero g ON u.genero_usuario = g.id_genero
-                     INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
-                     WHERE g.tipo_genero = ? AND p.nombre_proyecto = ?`;
+                    FROM usuario u
+                    INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+                    INNER JOIN genero g ON u.genero_usuario = g.id_genero
+                    INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+                    WHERE g.tipo_genero = ? AND p.nombre_proyecto = ?`;
 
         con.query(sql, [genero, proyecto], (err, data) => {
             if (err) {
