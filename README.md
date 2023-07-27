@@ -371,14 +371,15 @@ http://127.9.63.30:5042/usuario?rol=?
 ## Buscar Usuarios por grupo
 
 ```
-http://127.9.63.30:5042/usuario?grupo=?
+http://127.9.63.30:5042/usuario/generogrupo?genero=Masculino&grupo=Grupo%20A
 ```
+
 <img src="./img/usuariogrupo.png">
 
-## Buscar Usuarios por rol en los grupos
-
+## Buscar Usuarios por genero en los grupos
+|
 ```
-http://127.9.63.30:5042/usuario?genero=Masculino&grupo=Grupo%20A
+http://127.9.63.30:5042/usuario/generoyproyecto?genero=Masculino&proyecto=Proyecto%20A
 ```
 
 ## Buscar Genero por id

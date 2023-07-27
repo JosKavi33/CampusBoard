@@ -24,7 +24,7 @@ appExpress.use(express.json());
 appExpress.use(cookieParser());
 appExpress.get("/token", generateToken, (req,res)=>{
     res.send({token: req.token})
-})
+}) 
 appExpress.use("/estado", validateToken, storageEstado);
 appExpress.use("/documento", validateToken, storageDocumento);
 appExpress.use("/genero", validateToken, storageGenero);

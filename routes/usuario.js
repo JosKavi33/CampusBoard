@@ -119,17 +119,35 @@ const getUsuarioByGrupo = (grupo) => {
 };
 const getUsuarioByGeneroYGrupo = (genero, grupo) => {
     return new Promise((resolve, reject) => {
-        const sql = [
-            `SELECT u.*, g1.tipo_genero
-            FROM usuario u
-            INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
-            INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
-            INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
-            WHERE g1.tipo_genero = ? AND g2.nombre_grupo = ?`,
-            genero,
-            grupo
-        ];
-        con.query(...sql, (err, data) => {
+        const sql = `SELECT u.*, g1.tipo_genero
+                     FROM usuario u
+                     INNER JOIN grupo_usuario gu ON u.id_usuario = gu.id_usuario
+                     INNER JOIN genero g1 ON u.genero_usuario = g1.id_genero
+                     INNER JOIN grupo g2 ON gu.id_grupo = g2.id_grupo
+                     WHERE g1.tipo_genero = ? AND g2.nombre_grupo = ?`;
+
+        con.query(sql, [genero, grupo], (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                console.log(data);
+                resolve(data);
+            }
+        });
+    });
+};
+
+
+const getUsuarioByGeneroYProyecto = (genero, proyecto) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT u.*, g.tipo_genero
+                     FROM usuario u
+                     INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
+                     INNER JOIN genero g ON u.genero_usuario = g.id_genero
+                     INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
+                     WHERE g.tipo_genero = ? AND p.nombre_proyecto = ?`;
+
+        con.query(sql, [genero, proyecto], (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -139,28 +157,8 @@ const getUsuarioByGeneroYGrupo = (genero, grupo) => {
     });
 };
 
-const getUsuarioByGeneroYProyecto = (genero, proyecto) => {
-    return new Promise((resolve, reject) => {
-        const sql = [
-            `SELECT u.*, g.tipo_genero
-            FROM usuario u
-            INNER JOIN proyecto_usuario pu ON u.id_usuario = pu.id_usuario
-            INNER JOIN genero g ON u.genero_usuario = g.id_genero
-            INNER JOIN proyecto p ON pu.id_proyecto = p.id_proyecto
-            WHERE g.tipo_genero = ? AND p.nombre_proyecto = ?`,
-            genero,
-            proyecto
-        ];
-        con.query(...sql, (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-};
-storageUsuario.get("//:data?/:data2?", proxyUsuario, async (req, res) => {
+
+storageUsuario.get("/", proxyUsuario, async (req, res) => {
     try {
         const { id, documento, genero, rol, grupo, proyecto } = req.query;
         if (id) { 
@@ -177,12 +175,6 @@ storageUsuario.get("//:data?/:data2?", proxyUsuario, async (req, res) => {
             res.send(data);
         } else if (grupo) {
             const data = await getUsuarioByGrupo(grupo);
-            res.send(data);
-        } else if (genero && grupo) {
-            const data = await getUsuarioByGeneroYGrupo(genero, grupo);
-            res.send(data);
-        } else if (genero && proyecto) {
-            const data = await getUsuarioByGeneroYProyecto(genero, proyecto);
             res.send(data);
         } else {
             const sql = [
@@ -207,10 +199,38 @@ storageUsuario.get("//:data?/:data2?", proxyUsuario, async (req, res) => {
         res.sendStatus(500);
     }
 });
+storageUsuario.get("/generogrupo/:id?/:data?", proxyUsuario, async (req, res) => {
+    try { 
+        const { genero, grupo } = req.query;
+        if (genero && grupo) {
+            const data = await getUsuarioByGeneroYGrupo(genero, grupo);
+            res.send(data);
+        } else{
+            res.sendStatus(400);
+        } 
+    } catch (err) { 
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500);
+    }
+});
+storageUsuario.get("/generoyproyecto/:id?/:data?", proxyUsuario, async (req, res) => {
+    try {
+        const { genero, proyecto } = req.query;
+        if (genero && proyecto) {
+            const data = await getUsuarioByGeneroYProyecto(genero, proyecto);
+            res.send(data);
+        } else {
+            res.sendStatus(400);
+        }
+    } catch (err) {
+        console.error("Ocurrió un error al procesar la solicitud", err.message);
+        res.sendStatus(500); 
+    }
+});
 
 storageUsuario.post("/", proxyUsuario ,async (req, res) => {
     con.query( 
-        /*sql*/
+        /*sql*/     
         `INSERT INTO usuario SET ?`,
         await getBody(req), 
         (err, result) => {
