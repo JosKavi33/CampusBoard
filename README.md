@@ -123,7 +123,7 @@ Generar Token de acceso
 - Generación: Una vez ejecutado el anterior comando, dirijase a la herramienta que va a utilizar:
 
 ```
-http://${config.hostname}:${config.port}/documento
+http://${config.hostname}:${config.port}/token
 ```
 
 - Utilización: El endPoint anterior es el que va a generar el token. Tome ese token (solo el valor, sin comillas ni corchetes) y dirijase al apartado de HEADERS, agrege el header/Autorization y en el valor ingrese el token suministrado anteriormente.

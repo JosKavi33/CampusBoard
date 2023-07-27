@@ -156,8 +156,6 @@ INSERT INTO usuario (nombre_completo_usuario, numero_documento_usuario, tipo_doc
 ('Javier Gutiérrez', '235235252',9, 'Carrera 876, Ciudad C', 31, 1),
 ('Martha Chávez', '23123141', 10,'Calle 890, Ciudad A', 23, 2);
 
-SELECT * FROM usuario;
-
 INSERT INTO telefono (numero_telefono, usuario_telefono) VALUES
 ('123456789', 1),
 ('987654321', 2),
