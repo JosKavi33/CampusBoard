@@ -87,6 +87,14 @@ JWT_PRIVATE_KEY=""
 En el campo de MY_CONFIG ingrese un hostname y un puerto a su elección(preferiblemente mayor al 5000). Recuerde que por defecto el local host requiere que el hostname es 127.0.0.1. pero puede ser,
 El user es el usuario de la base de datos registrado en Mysql, por defecto es root, database es el nombre de la base de datos y el passworld es la contraseña de el usuario Mysql
 
+para este proyecto usamos esta configuracion:
+
+```
+MY_CONFIG={"hostname": "127.9.63.30", "port":5042}
+MY_CONNECT={"host":"localhost","user":"jose","database":"CAMPUSBOARD","password":"admin"}
+JWT_PRIVATE_KEY="tablas"
+```
+
 # INICIAR nodemon
 
 ```
