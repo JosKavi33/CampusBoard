@@ -166,13 +166,13 @@ Estos funciona  para POST/ GET/ DELETE/ PUT/,dentro del cliente que deseemos usa
   *http://${config.hostname}:${config.port}/proyecto*
 
 * EndPoint CRUD de la Tabla rol_usuario: 
-  *http://${config.hostname}:${config.port}/rol_usaurio*
+  *http://${config.hostname}:${config.port}/rol_usuario*
 
 * EndPoint CRUD de la Tabla rol: 
   *http://${config.hostname}:${config.port}/rol*
 
 * EndPoint CRUD de la Tabla tarea_usuario: 
-  *http://${config.hostname}:${config.port}/tarea_usaurio*
+  *http://${config.hostname}:${config.port}/tarea_usuario*
 
 * EndPoint CRUD de la Tabla tareas: 
   *http://${config.hostname}:${config.port}/tareas*
@@ -181,7 +181,7 @@ Estos funciona  para POST/ GET/ DELETE/ PUT/,dentro del cliente que deseemos usa
   *http://${config.hostname}:${config.port}/telefono*
 
 * EndPoint CRUD de la Tabla usuario: 
-  *http://${config.hostname}:${config.port}/usaurio*
+  *http://${config.hostname}:${config.port}/usuario*
 
 
 ## GET Para todas las tablas
