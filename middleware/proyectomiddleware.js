@@ -15,7 +15,7 @@ proxyProyecto.use(async(req,res,next)=>{
             jwt,
             encoder.encode(process.env.JWT_PRIVATE_KEY)
         )
-        let data = plainToClass(proyectoDTO, jwtData.payload, { excludeExtraneousValues: true});
+        let data = plainToClass(proyectoDTO, jwtData.payload.body, { excludeExtraneousValues: true});
         await validate(data); 
         next();
     } catch (err) {

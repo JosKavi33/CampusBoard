@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber, IsDate } from 'class-validator';
+import { IsNumber, IsString, IsDate } from 'class-validator';
 export class proyectoDTO {
     constructor(id_proyecto, nombre_proyecto, estado_proyecto, tiempo_inicio_proyecto, tiempo_entrega_proyecto, id) {
         this.ID = id_proyecto;
@@ -29,7 +29,8 @@ __decorate([
     __metadata("design:type", Number)
 ], proyectoDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'nombre_proyecto' })
+    Expose({ name: 'nombre_proyecto' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_proyecto es obligatorio` }}})
     @MaxLength(80, {message: ()=>{throw {status: 401, message: `El parametro nombre_proyecto no puede pasar os 30 caracteres`}}}) */
     ,

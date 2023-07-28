@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 export class estadoDTO {
     constructor(ID, estado, ID2) {
         this.id_estado = ID;
@@ -17,9 +17,8 @@ export class estadoDTO {
     }
 }
 __decorate([
-    Expose({ name: 'id_estado' })
-    /* @IsNumber() */
-    ,
+    Expose({ name: 'id_estado' }),
+    IsNumber(),
     Transform(({ value }) => { if (/^[0-9]+$/.test(value) || typeof value == "undefined")
         return Math.floor(value);
     else
@@ -27,7 +26,8 @@ __decorate([
     __metadata("design:type", Number)
 ], estadoDTO.prototype, "id_estado", void 0);
 __decorate([
-    Expose({ name: 'tipo_estado' })
+    Expose({ name: 'tipo_estado' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_estado es obligatorio` }}})
     @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_estado no puede pasar os 30 caracteres`}}}) */
     ,

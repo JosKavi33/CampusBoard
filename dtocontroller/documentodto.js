@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 export class documentoDTO {
     constructor(id_documento, tipo_documento, id) {
         this.ID = id_documento;
@@ -26,7 +26,8 @@ __decorate([
     __metadata("design:type", Number)
 ], documentoDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'tipo_documento' })
+    Expose({ name: 'tipo_documento' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_documento es obligatorio` }}})
     @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_documento no puede pasar os 30 caracteres`}}}) */
     ,

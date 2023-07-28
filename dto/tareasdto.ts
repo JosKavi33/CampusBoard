@@ -9,6 +9,7 @@ export class tareasDTO {
     ID: number;
 
     @Expose({ name: 'tarea_asignada' })
+    @IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tarea_asignada es obligatorio` }}})
     @MaxLength(80, {message: ()=>{throw {status: 401, message: `El parametro tarea_asignada no puede pasar os 30 caracteres`}}}) */
     @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value)) return value; else throw {status: 400, message:`El dato tipo_categoria incumple los parametros acordados`};},{ toClassOnly: true})

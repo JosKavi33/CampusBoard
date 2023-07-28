@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 export class generoDTO {
     constructor(ID, genero, ID2) {
         this.id_genero = ID;
@@ -26,7 +26,8 @@ __decorate([
     __metadata("design:type", Number)
 ], generoDTO.prototype, "id_genero", void 0);
 __decorate([
-    Expose({ name: 'tipo_genero' })
+    Expose({ name: 'tipo_genero' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_genero es obligatorio` }}})
     @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_genero no puede pasar os 30 caracteres`}}}) */
     ,

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 export class telefonoDTO {
     constructor(id_telefono, numero_telefono, usuario_telefono, id) {
         this.ID = id_telefono;
@@ -27,7 +27,8 @@ __decorate([
     __metadata("design:type", Number)
 ], telefonoDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'numero_telefono' })
+    Expose({ name: 'numero_telefono' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_usuario es obligatorio` }}})
     @MaxLength(20, {message: ()=>{throw {status: 401, message: `El parametro nombre_usuario no puede pasar os 30 caracteres`}}}) */
     ,

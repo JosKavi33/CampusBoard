@@ -9,9 +9,10 @@ export class rolDTO {
     id_rol: number;
 
     @Expose({ name: 'nombre_rol' })
+    @IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_rol es obligatorio` }}})
     @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro nombre_rol no puede pasar os 30 caracteres`}}}) */
-    @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value)) return value; else throw {status: 400, message:`El dato tipo_categoria incumple los parametros acordados`};},{ toClassOnly: true})
+    @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ]+$/.test(value)) return value; else throw {status: 400, message:`El dato nombre_rol incumple los parametros acordados`};},{ toClassOnly: true})
     nombre_rol: string;
 
     @Expose({ name: 'id' })
@@ -22,11 +23,11 @@ export class rolDTO {
 
     constructor(
         ID: number,
-        rol: string,
+        nombre_rol: string,
         ID2: number
-    ) {
+    ) { 
         this.id_rol = ID;
-        this.nombre_rol = rol;
+        this.nombre_rol = nombre_rol;
         this.id= ID2 
     }
 }

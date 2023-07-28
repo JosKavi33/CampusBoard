@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber, IsDate } from 'class-validator';
+import { IsNumber, IsString, IsDate } from 'class-validator';
 export class tareasDTO {
     constructor(id_tarea, tarea_asignada, estado_tarea, tiempo_inicio, tiempo_entrega, id) {
         this.ID = id_tarea;
@@ -29,7 +29,8 @@ __decorate([
     __metadata("design:type", Number)
 ], tareasDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'tarea_asignada' })
+    Expose({ name: 'tarea_asignada' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tarea_asignada es obligatorio` }}})
     @MaxLength(80, {message: ()=>{throw {status: 401, message: `El parametro tarea_asignada no puede pasar os 30 caracteres`}}}) */
     ,

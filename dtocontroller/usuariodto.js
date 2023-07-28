@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Expose, Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 export class usuarioDTO {
     constructor(id_usuario, nombre_usuario, numero_documento_usuario, tipo_documento_usuario, direccion_usuario, edad_usuario, genero_usuario, id) {
         this.ID = id_usuario;
@@ -31,7 +31,8 @@ __decorate([
     __metadata("design:type", Number)
 ], usuarioDTO.prototype, "ID", void 0);
 __decorate([
-    Expose({ name: 'nombre_completo_usuario' })
+    Expose({ name: 'nombre_completo_usuario' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro nombre_usuario es obligatorio` }}})
     @MaxLength(20, {message: ()=>{throw {status: 401, message: `El parametro nombre_usuario no puede pasar os 30 caracteres`}}}) */
     ,
@@ -52,6 +53,7 @@ __decorate([
 ], usuarioDTO.prototype, "numero_documento", void 0);
 __decorate([
     Expose({ name: 'tipo_documento_usuario' }),
+    IsNumber(),
     Transform(({ value }) => { if (/^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑüÜ\s,.# @]+$/.test(value))
         return value;
     else
@@ -59,7 +61,8 @@ __decorate([
     __metadata("design:type", Number)
 ], usuarioDTO.prototype, "tipo_documento", void 0);
 __decorate([
-    Expose({ name: 'direccion_usuario' })
+    Expose({ name: 'direccion_usuario' }),
+    IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro telefono_usuario es obligatorio` }}})
     @MaxLength(15, {message: ()=>{throw {status: 401, message: `El parametro telefono_usuario no puede pasar os 30 caracteres`}}}) */
     ,

@@ -9,6 +9,7 @@ export class grupoDTO {
     ID: number;
 
     @Expose({ name: 'nombre_grupo' })
+    @IsString()
     /* @IsDefined({message: ()=>{throw {status: 401, message: `El parametro tipo_estado es obligatorio` }}})
     @MaxLength(30, {message: ()=>{throw {status: 401, message: `El parametro tipo_estado no puede pasar os 30 caracteres`}}}) */
     @Transform(({value})=>{if(/^[a-z A-Z áéíóúÁÉÍÓÚñÑüÜ 0-9]+$/.test(value) || typeof value=="undefined" ) return value; else throw {status: 400, message:`El dato grupo incumple los parametros acordados`};},{ toClassOnly: true})
